@@ -1,6 +1,7 @@
 # WRO_FE_Team_Glitch_2026
-## Table of Contents
-## Our Team: Overview
+## Table of Contents:
+## Our Team:
+We are a 3 member team from Mumbai, India. All 3 of our members are 9th graders studying at Dhirubhai Ambani International School. All 3 of us are **passionate** about robotics. We are mentored by TIS (The Innovation Story).
 ## Our Robot
 ### Electronics Used:
 |Part Name|Use in Our Robot|Image|
@@ -21,6 +22,4 @@
 |****Actuators****|
 |35KG Servo|Controls angle of the front wheels to steer the robot|<img src="Bot-Photos/Parts Used/35kg Servo.png" alt="Banner" height="150">|
 |Johnsons Quad 600RPM DC Motor + Encoder|Controls forward and backward movement of the robot. Uses the encoder for localisation|<img src="Bot-Photos/Parts Used/Johnson's Quad DC Motor.jpeg" alt="Banner" height="150">|
-
-hello testing 123 this is a glitch haha
-### 
+ 
