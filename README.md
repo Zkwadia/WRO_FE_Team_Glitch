@@ -7,9 +7,9 @@
 |-|-|-|
 |**Microcontrollers**| | |
 |Raspberry Pi 4B|Primary processer - processes camera and LiDAR and controls steering servo and the drive motor|<img src="Bot-Photos/Parts Used/Raspberry Pi 4B.png" alt="Banner" height="150">|
-|Arduino Mega 2560|Secondary microcontroller - processes IMU and encoder data and transmits it to the RasPi|IMAGE HERE|
+|Arduino Mega 2560|Secondary microcontroller - processes IMU and encoder data and transmits it to the RasPi|<img src="Bot-Photos/Parts Used/Arduino Mega 2560.png" alt="Banner" height="150">|
 |**Sensors**| | |
-|HikVision USB Webcam|Camera that senses the game elements' position and colour to avoid them and choose the correct path|IMAGE HERE--------------- -------------|
+|HikVision USB Webcam|Camera that senses the game elements' position and colour to avoid them and choose the correct path|<img src="Bot-Photos/Parts Used/HIKVISION Webcam.png" alt="Banner" height="150">|
 |TFMini Plus LiDAR|Detects distance from sides of the robot to the field walls|IMAGE HERE-----------------------------|
 |RPLiDAR C1|360° LiDAR mounted at front of the robot to detect distance from traffic signs|IMAGE HERE -------------------|
 |BNO085x IMU|9DOF IMU (XYZ, YPR) used for localization to find the robot's position on the field|IMAGE HERE -------|
