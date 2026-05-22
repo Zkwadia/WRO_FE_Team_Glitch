@@ -8,10 +8,10 @@ Our Members:
 - **Shaurya Sule**: Electronics, Programming
 ## Our Robot
 ### Electronics Used:
-|Part Name|Use in Our Robot|Image|
-|-|-|-|
+|Part Name|Image|Use in Our Robot|Image|
+|-|-|-|-|
 |****Microcontrollers****|
-|Raspberry Pi 4B|Primary processer - processes camera and LiDAR and controls steering servo and the drive motor|<img src="Bot-Photos/Parts Used/Raspberry Pi 4B.png" alt="Banner" height="150">|
+|Raspberry Pi 4B|<img src="Bot-Photos/Parts Used/Raspberry Pi 4B.png" alt="Banner" height="150">|Primary processer - processes camera and LiDAR and controls steering servo and the drive motor|
 |Arduino Mega 2560|Secondary microcontroller - processes IMU and encoder data and transmits it to the RasPi|<img src="Bot-Photos/Parts Used/Arduino Mega 2560.png" alt="Banner" height="150">|
 |****Sensors****|
 |HikVision USB Webcam|Camera that senses the game elements' position and colour to avoid them and choose the correct path|<img src="Bot-Photos/Parts Used/HIKVISION Webcam.png" alt="Banner" height="150">|
@@ -26,4 +26,8 @@ Our Members:
 |****Actuators****|
 |35KG Servo|Controls angle of the front wheels to steer the robot|<img src="Bot-Photos/Parts Used/35kg Servo.png" alt="Banner" height="150">|
 |Johnsons Quad 600RPM DC Motor + Encoder|Controls forward and backward movement of the robot. Uses the encoder for localisation|<img src="Bot-Photos/Parts Used/Johnson's Quad DC Motor.jpeg" alt="Banner" height="150">|
+
+### Wiring Diagram
+//INCLUDE WIRING DIAGRAM HERE
+
  
