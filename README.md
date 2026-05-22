@@ -12,12 +12,12 @@ Our Members:
 |-|-|-|-|-|
 |****Microcontrollers****|
 |Raspberry Pi 4B|<img src="Bot-Photos/Parts Used/Raspberry Pi 4B.png" alt="Banner" height="150">|Primary processer - processes camera and LiDAR and controls steering servo and the drive motor|1|[Datasheet](https://pip-assets.raspberrypi.com/categories/545-raspberry-pi-4-model-b/documents/RP-008341-DS-1-raspberry-pi-4-datasheet.pdf?disposition=inline)
-|Arduino Mega 2560|<img src="Bot-Photos/Parts Used/Arduino Mega 2560.png" alt="Banner" height="150">|Secondary microcontroller - processes IMU and encoder data and transmits it to the RasPi|1|
+|Arduino Mega 2560|<img src="Bot-Photos/Parts Used/Arduino Mega 2560.png" alt="Banner" height="150">|Secondary microcontroller - processes IMU and encoder data and transmits it to the RasPi|1|[Datasheet](https://docs.arduino.cc/resources/datasheets/A000067-datasheet.pdf)
 |****Sensors****|
-|HikVision USB Webcam|<img src="Bot-Photos/Parts Used/HIKVISION Webcam.png" alt="Banner" height="150">|Camera that senses the game elements' position and colour to avoid them and choose the correct path|1|
-|TFMini Plus LiDAR|<img src="Bot-Photos/Parts Used/TF Mini Plus LiDAR.png" alt="Banner" height="150">|Detects distance from sides of the robot to the field walls|2|
-|RPLiDAR C1|<img src="Bot-Photos/Parts Used/RPLiDAR C1.png" alt="Banner" height="150">|360° LiDAR mounted at front of the robot to detect distance from traffic signs|1|
-|BNO085x IMU|<img src="Bot-Photos/Parts Used/BNO085x IMU.png" alt="Banner" height="150">|9DOF IMU (XYZ, YPR) used for localization to find the robot's position on the field|1|
+|HikVision USB Webcam|<img src="Bot-Photos/Parts Used/HIKVISION Webcam.png" alt="Banner" height="150">|Camera that senses the game elements' position and colour to avoid them and choose the correct path|1|[Datasheet](https://assets.hikvision.com/prd/public/all/doc/m000043043/DS-U02_Datasheet_20240617.pdf)
+|TFMini Plus LiDAR|<img src="Bot-Photos/Parts Used/TF Mini Plus LiDAR.png" alt="Banner" height="150">|Detects distance from sides of the robot to the field walls|2|[Datasheet](https://cdn.sparkfun.com/assets/2/b/0/3/8/TFmini_Plus-01-A02-Datasheet_EN.pdf)
+|RPLiDAR C1|<img src="Bot-Photos/Parts Used/RPLiDAR C1.png" alt="Banner" height="150">|360° LiDAR mounted at front of the robot to detect distance from traffic signs|1|[Datasheet](https://d229kd5ey79jzj.cloudfront.net/3157/SLAMTEC_rplidar_datasheet_C1_v1.0_en.pdf)
+|BNO085x IMU|<img src="Bot-Photos/Parts Used/BNO085x IMU.png" alt="Banner" height="150">|9DOF IMU (XYZ, YPR) used for localization to find the robot's position on the field|1|[Datasheet](https://cdn-learn.adafruit.com/downloads/pdf/adafruit-9-dof-orientation-imu-fusion-breakout-bno085.pdf)
 |****Power****|
 |11.1V Li-ion Battery|<img src="Bot-Photos/Parts Used/11.1V Li-ion Battery.png" alt="Banner" height="150">|Rechargable battery that powers the whole robot|1|
 |DC-DC Buck Converter|<img src="Bot-Photos/Parts Used/DC DC Buck Converter.png" alt="Banner" height="150">|Reduces the 12V power to 5V for the Arduino, Raspberry Pi, and encoder|1|
