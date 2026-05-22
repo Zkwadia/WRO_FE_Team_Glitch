@@ -1,7 +1,11 @@
 # WRO_FE_Team_Glitch_2026
 ## Table of Contents:
 ## Our Team:
-We are a 3 member team from Mumbai, India. All 3 of our members are 9th graders studying at Dhirubhai Ambani International School. All 3 of us are **passionate** about robotics. We are mentored by TIS (The Innovation Story).
+We are Team Glitch, a 3 member team from Mumbai, India. All 3 of our members are 9th graders studying at Dhirubhai Ambani International School. All 3 of us are extremely **passionate** about robotics and have a lot of prior experience. We are mentored by TIS (The Innovation Story).
+Our Members: 
+- Rehaan Dhandhia: Programming, Electronics
+- Zeus Wadia - Electronics
+- Shaurya Sule - 
 ## Our Robot
 ### Electronics Used:
 |Part Name|Use in Our Robot|Image|
