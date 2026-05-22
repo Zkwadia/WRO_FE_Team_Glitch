@@ -6,7 +6,7 @@
 |Part Name|Use in Our Robot|Image|
 |-|-|-|
 |**Microcontrollers**| | |
-|Raspberry Pi 4B|Primary processer - processes camera and LiDAR and controls steering servo and the drive motor|![App Screenshot](https://dummyimage.com/468x300?text=App+Screenshot+Here)|
+|Raspberry Pi 4B|Primary processer - processes camera and LiDAR and controls steering servo and the drive motor|![Image](Bot-Photos/Parts Used/Raspberry Pi 4B.png)|
 |Arduino Mega 2560|Secondary microcontroller - processes IMU and encoder data and transmits it to the RasPi|IMAGE HERE|
 |**Sensors**| | |
 |HikVision USB Webcam|Camera that senses the game elements' position and colour to avoid them and choose the correct path|IMAGE HERE--------------- -------------|
