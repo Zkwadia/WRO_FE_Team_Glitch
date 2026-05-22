@@ -12,7 +12,7 @@
 |HikVision USB Webcam|Camera that senses the game elements' position and colour to avoid them and choose the correct path|<img src="Bot-Photos/Parts Used/HIKVISION Webcam.png" alt="Banner" height="150">|
 |TFMini Plus LiDAR|Detects distance from sides of the robot to the field walls|<img src="Bot-Photos/Parts Used/TF Mini Plus LiDAR.png" alt="Banner" height="150">|
 |RPLiDAR C1|360° LiDAR mounted at front of the robot to detect distance from traffic signs|<img src="Bot-Photos/Parts Used/RPLiDAR C1.png" alt="Banner" height="150">|
-|BNO085x IMU|9DOF IMU (XYZ, YPR) used for localization to find the robot's position on the field<img src="Bot-Photos/Parts Used/BNO085x IMU.png" alt="Banner" height="150">|
+|BNO085x IMU|9DOF IMU (XYZ, YPR) used for localization to find the robot's position on the field|<img src="Bot-Photos/Parts Used/BNO085x IMU.png" alt="Banner" height="150">|
 |**Power**|
 |11.1V Li-ion Battery|Rechargable battery that powers the whole robot|<img src="Bot-Photos/Parts Used/11.1V Li-ion Battery.png" alt="Banner" height="150">|
 |DC-DC Buck Converter|Reduces the 12V power to 5V for the Arduino, Raspberry Pi, and encoder|<img src="Bot-Photos/Parts Used/DC DC Buck Converter.png" alt="Banner" height="150">|
