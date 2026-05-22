@@ -8,10 +8,10 @@ Our Members:
 - **Shaurya Sule**: Electronics, Programming
 ## Our Robot
 ### Electronics Used:
-|Part Name|Image|Use in Our Robot|Quantity|
-|-|-|-|-|
+|Part Name|Image|Use in Our Robot|Quantity|Details|
+|-|-|-|-|-|
 |****Microcontrollers****|
-|Raspberry Pi 4B|<img src="Bot-Photos/Parts Used/Raspberry Pi 4B.png" alt="Banner" height="150">|Primary processer - processes camera and LiDAR and controls steering servo and the drive motor|1|
+|Raspberry Pi 4B|<img src="Bot-Photos/Parts Used/Raspberry Pi 4B.png" alt="Banner" height="150">|Primary processer - processes camera and LiDAR and controls steering servo and the drive motor|1|[Datasheet](https://pip-assets.raspberrypi.com/categories/545-raspberry-pi-4-model-b/documents/RP-008341-DS-1-raspberry-pi-4-datasheet.pdf?disposition=inline)
 |Arduino Mega 2560|<img src="Bot-Photos/Parts Used/Arduino Mega 2560.png" alt="Banner" height="150">|Secondary microcontroller - processes IMU and encoder data and transmits it to the RasPi|1|
 |****Sensors****|
 |HikVision USB Webcam|<img src="Bot-Photos/Parts Used/HIKVISION Webcam.png" alt="Banner" height="150">|Camera that senses the game elements' position and colour to avoid them and choose the correct path|1|
