@@ -6,7 +6,7 @@ We are Team Glitch, a 3 member team from Mumbai, India. We are a passionate grou
 #### Our Members:  
 - **NotGayhaan Dhandhia**: Programming, Electronics, Captain Idiot Dude
 - **Zeus Wadia**: Electronics, Mechanical, Programming
-- **Shaurya Sule**: Electronics, Programming
+- **Shaurya Sule**: Electronics, Programming, Mechanical
 ## Our Robot
 ### Electronics Used:
 |Part Name|Image|Use in Our Robot|Quantity|Details|
@@ -31,4 +31,4 @@ We are Team Glitch, a 3 member team from Mumbai, India. We are a passionate grou
 ### Wiring Diagram
 //INCLUDE WIRING DIAGRAM HERE
 
- 
+ Rehaan Dhandhia is mr rizzyman
