@@ -30,13 +30,13 @@ We are Team Glitch, a 3 member team from Mumbai, India. We are a passionate grou
 |35KG Servo|<img src="Bot-Photos/Parts Used/35kg Servo.png" alt="Banner" height="150">|Controls angle of the front wheels to steer the robot|1|[Datasheet](https://hajim.rochester.edu/me/sites/kelley/me240/DS3235-270_datasheet.pdf)
 |Johnsons Quad 600RPM DC Motor + Encoder|<img src="Bot-Photos/Parts Used/Johnson's Quad DC Motor.jpeg" alt="Banner" height="150">|Controls forward and backward movement of the robot. Uses the encoder for localisation|1|[Datasheet](https://download.robokits.co.in/downloads/RMCS-3072.pdf)
 
-## Hardware Systems
+### Wiring Diagram
 
-### Drivetrain
-  #### Drive
-  We used a Johnsons Quad 600RPM DC Motor connected to the rear wheels to move the bot forward. The motor is connected to the rear wheels through a differential gearbox. This allows both wheels to move at different speeds, which is required while turning or if one rear wheel has more traction that the other. This system works by connecting a pinion gear the the motor directly moves to a large, ring gear. Mounted on the ring gear, is a spider gear. This spider gear is connected to both side gears, which are connected directly to both rear wheels. The spider gear is critical to allowing both rear wheels to move at different speeds. This works as when wheel needs to rotate more than another, it has more load, putting more tension from that side on the gearbox. This makes the spider gear rotate in the other direction, reducing the speed of the other wheel, while allowing that wheel to increase its speed. This allows our robot to turn. For example, while turning right, the wheel on the right will move slower than normal, while the left wheel will move faster while keeping motor speed constant.
+## Hardware Systems
+### Drive
+We used a Johnsons Quad 600RPM DC Motor connected to the rear wheels to move the bot forward. The motor is connected to the rear wheels through a differential gearbox. This allows both wheels to move at different speeds, which is required while turning or if one rear wheel has more traction that the other. This system works by connecting a pinion gear the the motor directly moves to a large, ring gear. Mounted on the ring gear, is a spider gear. This spider gear is connected to both side gears, which are connected directly to both rear wheels. The spider gear is critical to allowing both rear wheels to move at different speeds. This works as when wheel needs to rotate more than another, it has more load, putting more tension from that side on the gearbox. This makes the spider gear rotate in the other direction, reducing the speed of the other wheel, while allowing that wheel to increase its speed. This allows our robot to turn. For example, while turning right, the wheel on the right will move slower than normal, while the left wheel will move faster while keeping motor speed constant.
   
-  #### Steering
+### Steering
 
 ### Chassis
 
