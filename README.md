@@ -35,7 +35,10 @@ We used a differential gearbox system that makes sure the rear wheels can spin a
 We used a Johnsons Quad 600RPM DC Motor connected to the rear wheels to move the bot forward. The motor is connected to the rear wheels through a differential gearbox. This allows both wheels to move at different speeds, which is required while turning or if one rear wheel has more traction that the other. This system works by connecting a pinion gear the the motor directly moves to a large, ring gear. Mounted on the ring gear, is a spider gear. This spider gear is connected to both side gears, which are connected directly to both rear wheels. The spider gear is critical to allowing both rear wheels to move at different speeds. This works as when wheel needs to rotate more than another, it has more load, putting more tension from that side on the gearbox. This makes the spider gear rotate in the other direction, 
 
 ### Software
-Our drivetrain relies on 
+We used the encoder on the motor to aid in the localization of our robot. To calculate the amount of distance our robot has travelled, we checked the amount of encoder counts completed and used a basic formula to find the distance:
+```
+dist = (wheelCirc / 1560) * encPosition
+```
 ## Steering
 ### Hardware 
 Our steering hardware
