@@ -8,7 +8,9 @@ We are Team Glitch, a 3 member team from Mumbai, India. We are a passionate grou
 - **Zeus Wadia**: Electronics, Mechanical, Programming
 - **Shaurya Sule**: Electronics, Programming, Mechanical
 
-## Electronics Used:
+## Electronic Systems
+
+### Electronic Parts Used:
 |Part Name|Image|Use in Our Robot|Quantity|Details|
 |-|-|-|-|-|
 |****Microcontrollers****|
@@ -28,29 +30,38 @@ We are Team Glitch, a 3 member team from Mumbai, India. We are a passionate grou
 |35KG Servo|<img src="Bot-Photos/Parts Used/35kg Servo.png" alt="Banner" height="150">|Controls angle of the front wheels to steer the robot|1|[Datasheet](https://hajim.rochester.edu/me/sites/kelley/me240/DS3235-270_datasheet.pdf)
 |Johnsons Quad 600RPM DC Motor + Encoder|<img src="Bot-Photos/Parts Used/Johnson's Quad DC Motor.jpeg" alt="Banner" height="150">|Controls forward and backward movement of the robot. Uses the encoder for localisation|1|[Datasheet](https://download.robokits.co.in/downloads/RMCS-3072.pdf)
 
+## Hardware Systems
 
-## Drivetrain
-### Hardware
-We used a Johnsons Quad 600RPM DC Motor connected to the rear wheels to move the bot forward. The motor is connected to the rear wheels through a differential gearbox. This allows both wheels to move at different speeds, which is required while turning or if one rear wheel has more traction that the other. This system works by connecting a pinion gear the the motor directly moves to a large, ring gear. Mounted on the ring gear, is a spider gear. This spider gear is connected to both side gears, which are connected directly to both rear wheels. The spider gear is critical to allowing both rear wheels to move at different speeds. This works as when wheel needs to rotate more than another, it has more load, putting more tension from that side on the gearbox. This makes the spider gear rotate in the other direction, reducing the speed of the other wheel, while allowing that wheel to increase its speed. This allows our robot to turn. For example, while turning right, the wheel on the right will move slower than normal, while the left wheel will move faster while keeping motor speed constant.
+### Drivetrain
+  #### Drive
+  We used a Johnsons Quad 600RPM DC Motor connected to the rear wheels to move the bot forward. The motor is connected to the rear wheels through a differential gearbox. This allows both wheels to move at different speeds, which is required while turning or if one rear wheel has more traction that the other. This system works by connecting a pinion gear the the motor directly moves to a large, ring gear. Mounted on the ring gear, is a spider gear. This spider gear is connected to both side gears, which are connected directly to both rear wheels. The spider gear is critical to allowing both rear wheels to move at different speeds. This works as when wheel needs to rotate more than another, it has more load, putting more tension from that side on the gearbox. This makes the spider gear rotate in the other direction, reducing the speed of the other wheel, while allowing that wheel to increase its speed. This allows our robot to turn. For example, while turning right, the wheel on the right will move slower than normal, while the left wheel will move faster while keeping motor speed constant.
+  
+  #### Steering
 
-### Software
+### Chassis
+
+
+## Software Architecture
+
+### Challenge-Specific Logic:
+#### Open Challenge
+In the Open Challenge, we use our 2 TFMini+ LiDAR sensors at the side of the robot to detect the distance from the inner field perimeter. These sensors detect the distance to the nearest object that is in front of them, which in our case is the walls (inner and outer) of the game field. When either of the sensors detects a large jump in the distance to the nearest wall, they recognise that a turn (clockwise or anticlockwise) is required. The servo then turns, until the bot completes a 90 degree turn. After this, the robot continues forward again, until that same sensor detects a large jump in distance. There, the bot turns again. After the robot completes 12 turns (3 rounds), it identifies that it has finished the course. 
+We also use encoder data to track how much distance the robot has travelled, and the RPLiDAR for even more front and side obstacle information to get more reliable navigation. We also use multiprocessing is used so that we can run sensor reading, steering correction, and LiDAR processing simultaneously.
+
+#### Obstacle Challenge
+
+### Localization
+
+#### Iteration 1: Encoder + Servo Angle + IMU
 We used the encoder on the motor to aid in the localization of our robot. To calculate the amount of distance our robot has travelled, we checked the amount of encoder counts completed and used a basic formula to find the distance:
 ```
 dist = (wheelCirc / 1560) * encPosition
 ```
-## Steering
-### Hardware 
-Our steering hardware
-### Software
-Our steering software
-## Chassis
 
-## Wiring Diagram
-//INCLUDE WIRING DIAGRAM HERE
+ADD TRIGONOMETRY
 
-## Coding Logic
-### Open Challenge
-In the Open Challenge, we use our 2 TFMini+ LiDAR sensors at the side of the robot to detect the distance from the inner field perimeter. These sensors detect the distance to the nearest object that is in front of them, which in our case is the walls (inner and outer) of the game field. When either of the sensors detects a large jump in the distance to the nearest wall, they recognise that a turn (clockwise or anticlockwise) is required. The servo then turns, until the bot completes a 90 degree turn. After this, the robot continues forward again, until that same sensor detects a large jump in distance. There, the bot turns again. After the robot completes 12 turns (3 rounds), it identifies that it has finished the course. 
-We also use encoder data to track how much distance the robot has travelled, and the RPLiDAR for even more front and side obstacle information to get more reliable navigation. We also use multiprocessing is used so that we can run sensor reading, steering correction, and LiDAR processing simultaneously.
+#### Iteration 2: IMU
 
-### Obstacle Challenge
+### Camera Integration
+
+### LiDAR
