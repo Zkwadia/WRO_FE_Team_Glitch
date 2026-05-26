@@ -19,13 +19,13 @@ Our Members:
 |RPLiDAR C1|<img src="Bot-Photos/Parts Used/RPLiDAR C1.png" alt="Banner" height="150">|360° LiDAR mounted at front of the robot to detect distance from traffic signs|1|[Datasheet](https://d229kd5ey79jzj.cloudfront.net/3157/SLAMTEC_rplidar_datasheet_C1_v1.0_en.pdf)
 |BNO085x IMU|<img src="Bot-Photos/Parts Used/BNO085x IMU.png" alt="Banner" height="150">|9DOF IMU (XYZ, YPR) used for localization to find the robot's position on the field|1|[Datasheet](https://cdn-learn.adafruit.com/downloads/pdf/adafruit-9-dof-orientation-imu-fusion-breakout-bno085.pdf)
 |****Power****|
-|11.1V Li-ion Battery|<img src="Bot-Photos/Parts Used/11.1V Li-ion Battery.png" alt="Banner" height="150">|Rechargable battery that powers the whole robot|1|
+|11.1V Li-ion Battery|<img src="Bot-Photos/Parts Used/11.1V Li-ion Battery.png" alt="Banner" height="150">|Rechargable battery that powers the whole robot|1|11.1V, Li-Ion 2-cell, xA|
 |DC-DC Buck Converter|<img src="Bot-Photos/Parts Used/DC DC Buck Converter.png" alt="Banner" height="150">|Reduces the 12V power to 5V for the Arduino, Raspberry Pi, and encoder|1|
-|MDD10A Motor Driver|<img src="Bot-Photos/Parts Used/MDD10A Motor Driver.png" alt="Banner" height="150">|Single channel motor driver to power and control the drive motors|1|
-|Arduino Mega Shield|<img src="Bot-Photos/Parts Used/Arduino Mega Shield.png" alt="Banner" height="150">|Circuit board attached to Arduino to fasten wires using screws instead of just plugging in|1|
+|MDD10A Motor Driver|<img src="Bot-Photos/Parts Used/MDD10A Motor Driver.png" alt="Banner" height="150">|Single channel motor driver to power and control the drive motors|1|[Datasheet](https://makermotor.com/content/cytron/pn00218-cyt4/MDD10A%20User%27s%20Manual.pdf?srsltid=AfmBOooV62io2gMUfWQ314DJQqHSyYWEV69z_PfxwK8i50yYT-ExlGiV)
+|Arduino Mega Shield|<img src="Bot-Photos/Parts Used/Arduino Mega Shield.png" alt="Banner" height="150">|Circuit board attached to Arduino to fasten wires using screws instead of just plugging in|1| 
 |****Actuators****|
-|35KG Servo|<img src="Bot-Photos/Parts Used/35kg Servo.png" alt="Banner" height="150">|Controls angle of the front wheels to steer the robot|1|
-|Johnsons Quad 600RPM DC Motor + Encoder|<img src="Bot-Photos/Parts Used/Johnson's Quad DC Motor.jpeg" alt="Banner" height="150">|Controls forward and backward movement of the robot. Uses the encoder for localisation|1|
+|35KG Servo|<img src="Bot-Photos/Parts Used/35kg Servo.png" alt="Banner" height="150">|Controls angle of the front wheels to steer the robot|1|[Datasheet](https://hajim.rochester.edu/me/sites/kelley/me240/DS3235-270_datasheet.pdf)
+|Johnsons Quad 600RPM DC Motor + Encoder|<img src="Bot-Photos/Parts Used/Johnson's Quad DC Motor.jpeg" alt="Banner" height="150">|Controls forward and backward movement of the robot. Uses the encoder for localisation|1|[Datasheet](https://download.robokits.co.in/downloads/RMCS-3072.pdf)
 
 ### Wiring Diagram
 //INCLUDE WIRING DIAGRAM HERE
