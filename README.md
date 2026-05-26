@@ -45,5 +45,6 @@ Our steering software
 
 ## Coding Logic
 ### Open Challenge
-In the Open Challenge, we use our TFMini+ LiDAR sensors at the side of the robot to detect the distance from the inner field perimeter. 
+In the Open Challenge, we use our 2 TFMini+ LiDAR sensors at the side of the robot to detect the distance from the inner field perimeter. These sensors detect the distance to the nearest object that is in front of them. When either of the sensors detects a large jump in the distance to the nearest wall, they recognise that a turn (clockwise or anticlockwise) is required. The servo then turns, until the bot completes a 90 degree turn. After this, the robot continues forward again, until that same sensor detects a large jump in distance. There, the bot turns again. After the robot completes 12 turns (3 rounds), it identifies that it has finished the course.
+
 ### Obstacle Challenge
