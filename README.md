@@ -44,7 +44,6 @@ Our steering software
 //INCLUDE WIRING DIAGRAM HERE
 
 ## Coding Logic
-
 ### Open Challenge
-
+In the Open Challenge, we use our TFMini+ LiDAR sensors at the side of the robot to detect the distance from the inner field perimeter. 
 ### Obstacle Challenge
