@@ -29,22 +29,18 @@ We are Team Glitch, a 3 member team from Mumbai, India. We are a passionate grou
 |Johnsons Quad 600RPM DC Motor + Encoder|<img src="Bot-Photos/Parts Used/Johnson's Quad DC Motor.jpeg" alt="Banner" height="150">|Controls forward and backward movement of the robot. Uses the encoder for localisation|1|[Datasheet](https://download.robokits.co.in/downloads/RMCS-3072.pdf)
 
 ## Drivetrain
-
-## Hardware
-
-## Software
-
+### Hardware
+Our drivetrain hardware
+### Software
+Our drivetrain relies on 
 ## Steering
-
-## Hardware 
-
-## Software Architecture
-
+### Hardware 
+Our steering hardware
+### Software
+Our steering software
 ## Chassis
 
-### 
-
-### Wiring Diagram
+## Wiring Diagram
 //INCLUDE WIRING DIAGRAM HERE
 
 ## Coding Logic
