@@ -50,6 +50,8 @@ We also use encoder data to track how much distance the robot has travelled, and
 
 #### Obstacle Challenge
 
+### Steering
+
 ### Localization
 
 #### Iteration 1: Encoder + Servo Angle + IMU
