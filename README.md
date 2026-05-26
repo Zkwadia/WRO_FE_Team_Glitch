@@ -30,7 +30,8 @@ We are Team Glitch, a 3 member team from Mumbai, India. We are a passionate grou
 
 ## Drivetrain
 ### Hardware
-Our drivetrain hardware
+We used a differential gearbox system that makes sure the rear wheels can spin at different rates while maintaining balanced power distribution. This component plays a crucial role in maintaining smooth and controlled movement, particularly when the robot is turning or when one wheel has less traction than the other. By balancing the torque between both wheels, the differential gear helps prevent skidding and ensures stable movement. We started by using LEGO gears, but because of their low stability, we decided to design and illustrate a customized ring gear by 3d printing and implement it in the mechanism.
+
 ### Software
 Our drivetrain relies on 
 ## Steering
