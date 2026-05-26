@@ -1,4 +1,4 @@
-# WRO_FE_Team_Glitch_2026
+# WRO_FE_Team_Glitch_2026 
 ## Table of Contents:
 ## Our Team:
 We are Team Glitch, a 3 member team from Mumbai, India. We are a passionate group of 8th grade students who have prior experience in both FIRST Tech Challenge and WRO. We combine programming, engineering, and problem-solving skills and are mentored by The Innovation Story.
