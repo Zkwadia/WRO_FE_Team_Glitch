@@ -60,7 +60,11 @@ We used the encoder on the motor to aid in the localization of our robot. To cal
 dist = (wheelCirc / 1560) * encPosition
 ```
 
-ADD TRIGONOMETRY
+However, this did not allow us to accurately localize our robot, as it did not consider that the bot could turn. To solve this issue, we realised that while travelling, our robot's original position and new position formed a right-angled triangle, where the distance covered was the hypotenuse. Therefore, we took the Servo motor's angle and added it to the bot's current heading to find the value of theta. This helped us find the opposite and adjacent sides of the triangle, using trigonometry, helping us triangulate the robot's position (on X and Y coordinates) relative to its starting point.
+```
+opp = sin(theta) * hyp
+adj = cos(theta) * hyp
+```
 
 #### Iteration 2: IMU
 
