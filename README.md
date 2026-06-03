@@ -4,9 +4,9 @@
 We are Team Glitch, a 3 member team from Mumbai, India. We are a passionate group of 8th grade students who have prior experience in both FIRST Tech Challenge and WRO. We combine programming, engineering, and problem-solving skills and are mentored by The Innovation Story.
 
 #### Our Members:  
-- **Rehaan Dhandhia**:
-- **Zeus Wadia**:
-- **Shaurya Sule**:
+- **Rehaan Dhandhia**
+- **Zeus Wadia**
+- **Shaurya Sule**
 
 ## Electronic Systems
 
