@@ -1,0 +1,14 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" fill="#007bff" rx="10"/>
+  <rect x="10" y="10" width="180" height="180" fill="white" rx="8" opacity="0.15"/>
+  <text x="100" y="80" font-family="Arial" font-size="13" font-weight="bold" 
+        fill="white" text-anchor="middle">Arduino Mega 2560</text>
+  <text x="100" y="105" font-family="Arial" font-size="11" 
+        fill="white" text-anchor="middle">[ PLACEHOLDER ]</text>
+  <text x="100" y="135" font-family="Arial" font-size="9" 
+        fill="white" text-anchor="middle">Download from source link</text>
+  <text x="100" y="155" font-family="Arial" font-size="9" 
+        fill="white" text-anchor="middle">and replace this file as:</text>
+  <text x="100" y="173" font-family="Arial" font-size="10" font-weight="bold"
+        fill="white" text-anchor="middle">other/arduino_mega.jpg</text>
+</svg>

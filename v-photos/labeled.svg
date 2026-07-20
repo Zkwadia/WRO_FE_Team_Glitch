@@ -1,0 +1,6 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#2d2d2d" rx="10"/>
+  <text x="200" y="130" font-family="Arial" font-size="18" font-weight="bold" fill="white" text-anchor="middle">PLACEHOLDER</text>
+  <text x="200" y="160" font-family="Arial" font-size="14" fill="#aaa" text-anchor="middle">Robot Labeled View</text>
+  <text x="200" y="190" font-family="Arial" font-size="12" fill="#666" text-anchor="middle">Replace with: v-photos/labeled.jpg</text>
+</svg>
