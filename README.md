@@ -19,7 +19,7 @@ We are Team Glitch, a 3 member team from Mumbai, India. We are a passionate grou
 |****Sensors****|
 |HikVision USB Webcam|<img src="Bot-Photos/Parts Used/HIKVISION Webcam.png" alt="Banner" height="150">|Camera that senses the game elements' position and colour to avoid them and choose the correct path|1|[Datasheet](https://assets.hikvision.com/prd/public/all/doc/m000043043/DS-U02_Datasheet_20240617.pdf)
 |BNO085x IMU|<img src="Bot-Photos/Parts Used/BNO085x IMU.png" alt="Banner" height="150">|9DOF IMU (XYZ, YPR) used for localization to find the robot's position on the field|1|[Datasheet](https://cdn-learn.adafruit.com/downloads/pdf/adafruit-9-dof-orientation-imu-fusion-breakout-bno085.pdf)
-|VL53L0X Distance Sensor|a|a|1|[Datasheet](https://www.st.com/resource/en/datasheet/vl53l0x.pdf)
+|VL53L0X Distance Sensor|a|ToF distance sensor used for lane correction and parking accuracy|3|[Datasheet](https://www.st.com/resource/en/datasheet/vl53l0x.pdf)
 |****Power****|
 |11.1V Li-ion Battery|<img src="Bot-Photos/Parts Used/11.1V Li-ion Battery.png" alt="Banner" height="150">|Rechargable battery that powers the whole robot|1|[Datasheet](https://quartzcomponents.com/products/high-fly-11-1v-1000mah-3s-30c-lithium-polymer-rechargeable-battery?srsltid=AfmBOooGkjnd4aVrqf4FNReuglmn8xht3cvrOTYpgqrLoAxjA5Q6hU98)|
 |DC-DC Buck Converter|<img src="Bot-Photos/Parts Used/DC DC Buck Converter.png" alt="Banner" height="150">|Reduces the 12V power to 5V for the Arduino, Raspberry Pi, and encoder|1|[Datasheet](https://somanytech.com/ic-lm2596-dc-to-dc-buck-converter-module-datasheet-schematic/)|
