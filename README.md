@@ -105,18 +105,15 @@ WRO 2026 Future Engineers is a self-driving car challenge on a 3m × 3m racetrac
 | **Parking** | Fully inside lot, parallel to wall | 4-state parking state machine + TFmini Plus proximity |
 | **Direction** | Detected at start | Side wall distance + outer wall camera zone |
 
-### WRO 2026 Documentation Scoring (30 points)
+### WRO 2026 Documentation Scoring (30 Points)
 
 | Area | Max Points | Our Coverage |
-|------|-----------|--------------|
-| **1. Mobility Management** | 4 | Motor selection, Ackermann geometry, drive system, encoder |
-| **2. Power & Sense Management** | 4 | Dual-rail power, TFmini Plus, BNO085, wiring diagram |
-| **3. Obstacle Management** | 4 | State machines, centroid PD, parking sequence, source code |
-| **4. Pictures — Team & Vehicle** | 4 | 6-angle photos, labeled view, team photos |
-| **5. Performance Videos** | 4 | Open challenge + obstacle challenge full runs |
-| **6. GitHub Utilization** | 4 | Structured repo, commit history, full documentation |
-| **7. Engineering Factor** | 4 | Custom polycarbonate chassis, HSV pipeline, multiprocessing |
-| **8. Overall Judge Impression** | 2 | Replication guide, decision rationale, code comments |
+|------|------:|------|
+| **1. Mobility & Mechanical Design** | 6 | Motor selection, Parallel steering system, custom polycarbonate chassis, drive system, encoder integration |
+| **2. Power & Sensor Architecture** | 6 | Dual rail power system, TFmini Plus LiDAR, BNO085 IMU, sensor placement, wiring diagrams |
+| **3. Software Architecture & Obstacle Strategy** | 6 | State machines, HSV vision pipeline, centroid based PD control, obstacle avoidance logic, parking sequence, source code |
+| **4. Systems Thinking & Engineering Decisions** | 6 | Design iterations, subsystem integration, engineering tradeoffs, decision rationale, risk mitigation |
+| **5. Reproducibility & GitHub Quality** | 6 | Structured repository, commit history, README, CAD files, wiring diagrams, full documentation, replication guide |
 | **Total** | **30** | |
 
 ### Educational Objectives
