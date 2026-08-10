@@ -768,14 +768,9 @@ Earlier parking versions used encoder counts and timeouts as terminal conditions
 
 ### Obstacle Challenge
 
-**PLACEHOLDER: Obstacle Challenge Video**
-
-[![Obstacle Challenge](https://img.youtube.com/vi/YOUR_VIDEO_ID_2/0.jpg)](https://youtu.be/YOUR_VIDEO_ID_2)
+[![Obstacle Challenge](https://img.youtube.com/vi/YOUR_VIDEO_ID_2/0.jpg)](https://youtu.be/rnG7ssZLk40?si=vxQiCSiPdluKtJ0-)
 
 *Traffic sign detection, 3 laps, parallel parking — full score.*
-
-**Media:** Video editing done in [tool — fill in]. All performance documentation recorded and reviewed using the post-run `build_video.py` log reconstruction pipeline.
-
 ---
 
 ## 🌐 GitHub Utilization
