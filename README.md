@@ -64,9 +64,9 @@ Each folder in this repository contains detailed technical content:
 
 | Member | Role | Background | About |
 |--------|------|------------|--------|
-| **Shaurya Sule** | Mechanical Design, Electronics, Strategy | 9th Grade | Shaurya is a talented student from the grade 9 of the Dhirubhai Ambani International school. He engages in many activities aside from academics, such as Robotics and Debate. He’s done WRO multiple times, having gone to the world championships and placing third once. He also does FTC, as Captain of his FTC team. He does debate as well, having won multiple championships across India.|
-| **Rehaan Dhandhia** | Software, Vision & Sensor Integration | 9th Grade | Rehaan is a student in Grade 9 of the Dhirubhai Ambani International School, and is 14 years old. This is his 4th year participating in WRO, having gone to the World Championships and placing 3rd in 2023, and his first doing in the Future Engineers category. He has also done FIRST Tech Challenge (FTC) for 2 years. Within robotics, his favourite parts are programming and working with electronics. He loves math and physics, and also has been playing piano for 8 years and participated at state-level badminton tournaments. |
-| **Zeus Wadia** | Electronics, Testing, Documentation | 9th Grade | Zeus is a Grade 9 student at Nita Mukesh Ambani Junior School, Mumbai, with a strong passion for robotics, engineering, and technology. He has participated in competitive robotics programs including the World Robot Olympiad (WRO) and FIRST Tech Challenge (FTC), developing skills in mechanical design, electronics, programming, and problem solving. In 2025, he competed in the WRO Future Innovators Junior Category and achieved 12th place at the National Finals. He has also been an active FTC participant for the past two years. Through robotics, he has gained experience in robot design, assembly, electronics, programming, and autonomous systems, while continuously expanding his technical knowledge and engineering skills.|
+| **Shaurya Sule** | Documentation, Electronics, Strategy | 9th Grade | Shaurya is a talented student from the grade 9 of the Dhirubhai Ambani International school. He engages in many activities aside from academics, such as Robotics and Debate. He’s done WRO multiple times, having gone to the world championships and placing third once. He also does FTC, as Captain of his FTC team. He does debate as well, having won multiple championships across India.|
+| **Rehaan Dhandhia** | Software, Vision & Sensor Integration | 9th Grade | Rehaan is a student in Grade 9 of the Dhirubhai Ambani International School, and is 14 years old. This is his 4th year participating in WRO, having gone to the World Championships and placing 3rd in 2023, and his first doing in the Future Engineers category. He has also done FIRST Tech Challenge (FTC) for 2 years. Within robotics, his favourite parts are programming and working with electronics. He loves math and physics, and also has been playing piano for 8 years and participated at state-level badminton tournaments.|
+| **Zeus Wadia** | Electronics, Testing, Mechanical Design | 9th Grade | Zeus is a Grade 9 student at Nita Mukesh Ambani Junior School, Mumbai, with a strong passion for robotics, engineering, and technology. He has participated in competitive robotics programs including the World Robot Olympiad (WRO) and FIRST Tech Challenge (FTC), developing skills in mechanical design, electronics, programming, and problem solving. In 2025, he competed in the WRO Future Innovators Junior Category and achieved 12th place at the National Finals. He has also been an active FTC participant for the past two years. Through robotics, he has gained experience in robot design, assembly, electronics, programming, and autonomous systems, while continuously expanding his technical knowledge and engineering skills.|
 
 **Coach:** **Ajinkya Giri** — [Robotics Engineer and Mentor]
 
@@ -172,7 +172,7 @@ WRO 2026 Future Engineers is a self-driving car challenge on a 3m × 3m racetrac
 | **Dimensions** | [190] × [120] × [300] mm |
 | **Weight** | ~[1.310] kg |
 | **Drive Type** | Rear-wheel drive, 12V DC geared motor + external quadrature encoder |
-| **Steering** | Servo-actuated Ackermann geometry |
+| **Steering** | Servo-actuated parallel steering system |
 | **Primary Brain** | Raspberry Pi 4 Model B (4 GB) |
 | **Co-processor** | Seeed XIAO ESP32-C3 (IMU + encoder over USB UART) |
 | **Vision** | USB Camera + OpenCV HSV pipeline (no Edge TPU) |
@@ -288,21 +288,12 @@ During early testing we found the Pi's 3V3 rail was insufficient to power the BN
 <img src="models/gif_1.gif" alt="bot view 1" height="325">
 <img src="models/gif_2.gif" alt="bot view 1" height="325">
 </div>
-The chassis and electronics tray are laser-cut or CNC-cut from polycarbonate sheet (6mm chassis, 3mm tray) — not 3D printed. The rear axle is driven by the Johnson 900RPM motor via direct coupling. The front axle uses Ackermann-geometry steering actuated by the DS3235 servo.
+The chassis and electronics tray are laser-cut or CNC-cut from polycarbonate sheet (6mm chassis, 3mm tray) — not 3D printed. The rear axle is driven by the Johnson 900RPM motor via direct coupling. The front axle using a parallel steering system  actuated by the DS3235 35kg Servo.
 
-**Why Ackermann geometry?** A parallel steering linkage makes the inner wheel skid on tight turns because each wheel follows a different radius. Ackermann geometry gives each wheel a slightly different angle so both track their own arc — less tyre scrub, more predictable turn radius, and smoother PID tuning.
+**Why Parallel Steering?** We first considered using Ackerman geometry to reduce wheel skid and tyre scrub, however, this system was extremely bulky. Instead, we decided to use a compact, lightweight parallel steering linkage, which helped us make our bot more compact and balanced.
 
-**Turning radius calculation:**
-
-```
-Wheelbase (L)    = [102] mm
-Track width (T)  = [102] mm
-Max servo angle  = 45°
-
-Inner wheel angle: δ_inner = arctan(L / (R - T/2))
-Outer wheel angle: δ_outer = arctan(L / (R + T/2))
-R_min ≈ [153] mm
-```
+**Acknowledging Trade-Offs:**
+A parallel steering linkage makes the inner wheel skid on tight turns because each wheel follows a different radius. However, using custom designed wheels coated with cat-tongue grip tape helped us minimise tyre deformation.
 
 ### Drive System
 
@@ -329,6 +320,9 @@ Linear speed = (RPM / 60) × π × D
 The Johnson 900RPM has no built-in encoder. An external quadrature encoder is mounted on the output shaft and read by the XIAO ESP32-C3. `SPEED_SCALE` (counts/sec at 100% duty) must be calibrated from run logs before enabling `ki_v` or `kd_v`.
 
 **Motor Driver:** The Vikram-453R6 (DRV8871) replaced the MDD3A after two driver failures — the MDD3A has no overcurrent protection. The DRV8871 adds hardware overcurrent detection, thermal shutdown, and auto-recovery. Its 45V ceiling handles inductive spikes. The IN1/IN2 PWM interface is pin-compatible with MDD3A so no code changes were needed.
+
+**Reducing Tyre Skid: Differential Gearbox:**
+Since while turning, both wheels follow a different turning radius, we decided to use a differential gearbox, which allows the wheels to rotate at different speeds while turning, reducing wheel slippage and improving traction. It uses a ring gear, spider gear, and side gears connected to the wheels, allowing the outer wheel to rotate faster and the inner wheel slower during turns while maintaining a constant motor speed.
 
 ### Structural Analysis
 
@@ -684,6 +678,8 @@ MAIN PARKING
 
 A simple forward drive into the slot fails because the robot always arrives at a slight angle from the final turn. Our 4-state sequence solves this:
 
+**PLACEHOLDER: Parking approach diagram** — *showing robot position at each state transition*
+
 - **STATE 1** — Backs out until the pink boundary disappears (exits the approach angle), then optionally drives forward into position
 - **STATE 2** — Rotates 90° and reverses until the pink boundary is visible again (robot physically inside the slot)
 - **STATE 4** — Forward with heading bias, then straighten, then inch forward until `centr_y_pink > 235` — the pink border filling the camera frame is the terminal condition, independent of encoder count or time
@@ -758,15 +754,22 @@ Earlier parking versions used encoder counts and timeouts as terminal conditions
 
 ### Open Challenge
 
-[Open Challenge](https://youtu.be/8WccRAMPBGA?si=UEdlYP7w4LqdHMFX)
+**PLACEHOLDER: Open Challenge Video**
+
+[![Open Challenge](https://img.youtube.com/vi/YOUR_VIDEO_ID/0.jpg)](https://youtu.be/YOUR_VIDEO_ID)
 
 *Autonomous navigation — 3 laps, return to start, full score.*
 
 ### Obstacle Challenge
 
-[Obstacle Challenge](https://youtu.be/rnG7ssZLk40?si=vxQiCSiPdluKtJ0-)
+**PLACEHOLDER: Obstacle Challenge Video**
+
+[![Obstacle Challenge](https://img.youtube.com/vi/YOUR_VIDEO_ID_2/0.jpg)](https://youtu.be/YOUR_VIDEO_ID_2)
 
 *Traffic sign detection, 3 laps, parallel parking — full score.*
+
+**Media:** Video editing done in [tool — fill in]. All performance documentation recorded and reviewed using the post-run `build_video.py` log reconstruction pipeline.
+
 ---
 
 ## 🌐 GitHub Utilization
@@ -829,7 +832,7 @@ Chassis and tray are laser/CNC-cut, not printed. Print settings: PETG, 0.2mm lay
 
 1. Cut chassis (6mm poly) and electronics tray (3mm poly).
 2. Mount Johnson 900RPM motor. Mount external encoder on output shaft, route cable to XIAO.
-3. Install DS3235 servo + Ackermann linkage. Inner wheel must turn sharper than outer at full lock.
+3. Install DS3235 servo + Parallel steering linkage. Inner wheel must turn sharper than outer at full lock.
 4. Mount sensor mast at front-centre.
 5. Mount TFmini Plus on right flank at 60mm height using `tf mini mount horizontal.STL`, perpendicular to travel.
 6. Mount camera (`new camera mount.STL`) — fixed 10° tilt, no adjustment.
