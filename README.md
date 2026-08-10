@@ -60,7 +60,8 @@ Each folder in this repository contains detailed technical content:
 
 ## 👥 The Team
 
-**PLACEHOLDER: Official Team Photo**
+**Official Team Photo**
+<img src="t-photos/team_official.jpg" width="900">
 
 | Member | Role | Background | About |
 |--------|------|------------|--------|
@@ -68,7 +69,7 @@ Each folder in this repository contains detailed technical content:
 | **Rehaan Dhandhia** | Software, Vision & Sensor Integration | 9th Grade | Rehaan is a student in Grade 9 of the Dhirubhai Ambani International School, and is 14 years old. This is his 4th year participating in WRO, having gone to the World Championships and placing 3rd in 2023, and his first doing in the Future Engineers category. He has also done FIRST Tech Challenge (FTC) for 2 years. Within robotics, his favourite parts are programming and working with electronics. He loves math and physics, and also has been playing piano for 8 years and participated at state-level badminton tournaments.|
 | **Zeus Wadia** | Electronics, Testing, Mechanical Design | 9th Grade | Zeus is a Grade 9 student at Nita Mukesh Ambani Junior School, Mumbai, with a strong passion for robotics, engineering, and technology. He has participated in competitive robotics programs including the World Robot Olympiad (WRO) and FIRST Tech Challenge (FTC), developing skills in mechanical design, electronics, programming, and problem solving. In 2025, he competed in the WRO Future Innovators Junior Category and achieved 12th place at the National Finals. He has also been an active FTC participant for the past two years. Through robotics, he has gained experience in robot design, assembly, electronics, programming, and autonomous systems, while continuously expanding his technical knowledge and engineering skills.|
 
-**Coach:** **Ajinkya Giri** — [Robotics Engineer and Mentor]
+**Coach:** **Ajinkya Giri** — Robotics Engineer and Mentor
 
 **PLACEHOLDER: Fun Team Photo**
 

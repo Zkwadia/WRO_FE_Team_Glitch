@@ -1,6 +1,0 @@
-<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
-  <rect width="400" height="300" fill="#1a3a5c" rx="10"/>
-  <text x="200" y="140" font-family="Arial" font-size="18" font-weight="bold" fill="white" text-anchor="middle">PLACEHOLDER</text>
-  <text x="200" y="170" font-family="Arial" font-size="14" fill="#aaa" text-anchor="middle">Official Team Photo</text>
-  <text x="200" y="200" font-family="Arial" font-size="12" fill="#666" text-anchor="middle">Replace with: t-photos/team_official.jpg</text>
-</svg>
