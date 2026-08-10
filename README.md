@@ -2,18 +2,31 @@
 
 <div align="center">
 
-<!-- TEAM BANNER PLACEHOLDER -->
-<!-- Replace with your banner image: ![Banner](other/banner.png) -->
-
 [![YouTube](https://img.shields.io/badge/YouTube-%23FF0000.svg?style=for-the-badge&logo=YouTube&logoColor=white)](https://www.youtube.com/@TeamGlitchWRO)
-[![Instagram](https://img.shields.io/badge/Instagram-%23E4405F.svg?style=for-the-badge&logo=Instagram&logoColor=white)](https://www.instagram.com)
 
 </div>
 
 ---
 
+## 🏆 WRO 2026 Future Engineers — India Nationals
+
+Welcome to the GitHub repository of **Team Glitch**, competing in the **World Robot Olympiad™ (WRO®) Future Engineers 2026** category at the India National Finals. Our team is made up of students who designed, built, and programmed a fully autonomous self-driving vehicle to tackle the dynamic challenges of the WRO 2026 competition.
+
+Our name, **Glitch**, reflects our engineering philosophy — finding the unexpected edge cases, the subtle bugs, and the tiny mis-alignments that make the difference between a run that scores and a run that doesn't. We don't just build a robot; we debug it relentlessly until every glitch is gone.
+
+> *"Every test run is a debugging session. Every crash is data."*
+
+**Current best times on the 3m × 3m field:**
+- **Open Challenge**: ~[60] seconds (full score)
+- **Obstacle Challenge**: ~[72] seconds (full score)
+
+**PLACEHOLDER: Team banner image**
+
+---
+
 ## 📚 Table of Contents
 
+- [📂 Documentation Structure](#-documentation-structure)
 - [👥 The Team](#-the-team)
 - [🎯 Challenge Overview](#-challenge-overview)
 - [🤖 Our Robot](#-our-robot)
@@ -24,41 +37,95 @@
 - [🚧 Obstacle Challenge — Strategy & Logic](#-obstacle-challenge--strategy--logic)
 - [🔄 Engineering Decisions & Iterations](#-engineering-decisions--iterations)
 - [📹 Performance Videos](#-performance-videos)
-- [🛠️ How to Build & Deploy](#️-how-to-build--deploy)
+- [🌐 GitHub Utilization](#-github-utilization)
+- [📜 License](#-license)
+
+---
+
+## 📂 Documentation Structure
+
+Each folder in this repository contains detailed technical content:
+
+| Folder | Content | 
+|--------|---------|
+| `v-photos/` | Robot photos — 6 angles + labeled component view |
+| `t-photos/` | Team photos — official and fun |
+| `schemes/` | Wiring diagram, power architecture |
+| `models/` | 3D print STL files, STEP CAD files for polycarbonate cuts |
+| `src/` | Main Python scripts — obstacle and open challenge |
+| `versionTest/` | Test Python scripts — All modules testing|
+| `other/` | Component images used in this README |
 
 ---
 
 ## 👥 The Team
 
-<!-- Replace with your official team photo -->
-<!-- ![Team Official Photo](t-photos/team_official.jpg) -->
-
 **PLACEHOLDER: Official Team Photo**
 
-| Member | Role | Background |
-|--------|------|------------|
-| **[Shaurya  Sule]** | Mechanical Design, Electronics, Strategy |
-| **[Rehaan Dhandhia]** | Software, Vision & Sensor Integration  |
-| **[Zeus Wadia]** | Electronics, Testing, Documentation |
+| Member | Role | Background | About |
+|--------|------|------------|--------|
+| **Shaurya Sule** | Mechanical Design, Electronics, Strategy | 9th Grade | Shaurya is a talented student from the grade 9 of the Dhirubhai Ambani International school. He engages in many activities aside from academics, such as Robotics and Debate. He’s done WRO multiple times, having gone to the world championships and placing third once. He also does FTC, as Captain of his FTC team. He does debate as well, having won multiple championships across India.|
+| **Rehaan Dhandhia** | Software, Vision & Sensor Integration | 9th Grade |
+| **Zeus Wadia** | Electronics, Testing, Documentation | 9th Grade |
 
-**Coach:** [Ajinkya Giri] 
-
-<!-- Replace with your fun team photo -->
-<!-- ![Team Fun Photo](t-photos/team_fun.jpg) -->
+**Coach:** **Ajinkya Giri** — [Robotics Engineer and Mentor]
 
 **PLACEHOLDER: Fun Team Photo**
+
+
+### Team Journey
+
+Throughout development — from first chassis cut to nationals — we logged every run, debugged every crash, and iterated on every subsystem. The photos below capture key moments from that process.
+
+**PLACEHOLDER: Testing session photo** — *Caption: [describe what's happening — e.g. tuning parking at 11pm before nationals]*
+
+**PLACEHOLDER: Build session photo** — *Caption: [describe — e.g. first time the robot completed 3 laps]*
 
 ---
 
 ## 🎯 Challenge Overview
 
-WRO 2026 Future Engineers is a self-driving car challenge where an autonomous robotic vehicle must complete three laps on a 3m × 3m racetrack that randomly changes configuration for each round. The competition has two challenge types:
+WRO 2026 Future Engineers is a self-driving car challenge on a 3m × 3m racetrack that changes configuration every round.
 
-**Open Challenge** — Complete three laps on a track with randomly configured internal walls. No traffic signs are present. The lane width changes per section (1000 mm or 600 mm). The goal is to navigate cleanly and quickly, stopping autonomously in the starting section after three laps.
+### Open Challenge
 
-**Obstacle Challenge** — Complete three laps while obeying red and green traffic sign pillars (red = keep right, green = keep left). After completing all three laps, the vehicle must identify the magenta-bordered parking lot and execute a parallel park within it. The parking space is exactly 1.5× the robot's length, and touching the magenta boundaries instantly ends the round.
+| Aspect | Requirement | Our Approach |
+|--------|-------------|--------------|
+| **Track Variability** | Random internal wall placements | Outer wall centroid PD — adapts to any corridor width |
+| **Navigation** | Unknown layout each round | Camera wall detection + IMU heading hold |
+| **Lap Count** | 3 laps, stop at start | Counter + `last_wall` camera zone + IMU heading snap |
+| **Speed** | Sub-60s target | 85% PWM, smoothed ramp, no speed PID needed |
 
-Both challenges are Time Attack format — one vehicle at a time, scored on laps completed, traffic sign compliance, stopping position, and parking success.
+### Obstacle Challenge
+
+| Aspect | Requirement | Our Approach |
+|--------|-------------|--------------|
+| **Traffic Signs** | Red → right, Green → left | OpenCV HSV centroid PD, 2-state avoidance |
+| **Lap Count** | 3 laps | Floor line colour trigger, encoder odometry |
+| **Parking** | Fully inside lot, parallel to wall | 4-state parking state machine + TFmini Plus proximity |
+| **Direction** | Detected at start | Side wall distance + outer wall camera zone |
+
+### WRO 2026 Documentation Scoring (30 points)
+
+| Area | Max Points | Our Coverage |
+|------|-----------|--------------|
+| **1. Mobility Management** | 4 | Motor selection, Ackermann geometry, drive system, encoder |
+| **2. Power & Sense Management** | 4 | Dual-rail power, TFmini Plus, BNO085, wiring diagram |
+| **3. Obstacle Management** | 4 | State machines, centroid PD, parking sequence, source code |
+| **4. Pictures — Team & Vehicle** | 4 | 6-angle photos, labeled view, team photos |
+| **5. Performance Videos** | 4 | Open challenge + obstacle challenge full runs |
+| **6. GitHub Utilization** | 4 | Structured repo, commit history, full documentation |
+| **7. Engineering Factor** | 4 | Custom polycarbonate chassis, HSV pipeline, multiprocessing |
+| **8. Overall Judge Impression** | 2 | Replication guide, decision rationale, code comments |
+| **Total** | **30** | |
+
+### Educational Objectives
+
+- **Computer Vision**: Real-world HSV colour segmentation, zone-based detection, LAB colour space
+- **Control Systems**: PID steering, closed-loop speed control, positional vs. incremental PID
+- **Embedded Systems**: Multiprocessing on Linux, UART communication, I2C sensor management
+- **Systems Engineering**: Process isolation, shared memory, fault recovery
+- **Engineering Documentation**: Decision rationale, iteration history, replication guides
 
 ---
 
@@ -72,32 +139,30 @@ Both challenges are Time Attack format — one vehicle at a time, scored on laps
     <td align="center"><b>Rear View</b></td>
   </tr>
   <tr>
-    <td><img src="v-photos/front.jpeg" width="350" height="400" style="object-fit:cover;"></td>
-    <td><img src="v-photos/rear.jpeg" width="350" height="400" style="object-fit:cover;"></td>
+    <td><img src="v-photos/front.jpeg" width="250"></td>
+    <td><img src="v-photos/rear.jpeg" width="250"></td>
   </tr>
   <tr>
     <td align="center"><b>Left Side</b></td>
     <td align="center"><b>Right Side</b></td>
   </tr>
   <tr>
-    <td><img src="v-photos/left.jpeg" width="350" height="400" style="object-fit:cover;"></td>
-    <td><img src="v-photos/right.jpeg" width="350" height="400" style="object-fit:cover;"></td>
+    <td><img src="v-photos/left.jpeg" width="250"></td>
+    <td><img src="v-photos/right.jpeg" width="250"></td>
   </tr>
   <tr>
     <td align="center"><b>Top View</b></td>
     <td align="center"><b>Bottom View</b></td>
   </tr>
   <tr>
-    <td><img src="v-photos/top.jpeg" width="350" height="400" style="object-fit:cover;"></td>
-    <td><img src="v-photos/bottom.jpeg" width="350" height="400" style="object-fit:cover;"></td>
+    <td><img src="v-photos/top.jpeg" width="250"></td>
+    <td><img src="v-photos/bottom.jpeg" width="250"></td>
   </tr>
   <tr>
     <td colspan="2" align="center"><b>Labeled Component View</b></td>
   </tr>
   <tr>
-    <td colspan="2" align="center">
-      <img src="v-photos/labeled.jpeg" width="720" height="400" style="object-fit:cover;">
-    </td>
+    <td colspan="2" align="center"><img src="v-photos/labeled.jpeg" width="500"></td>
   </tr>
 </table>
 
@@ -107,16 +172,27 @@ Both challenges are Time Attack format — one vehicle at a time, scored on laps
 
 | Parameter | Value |
 |-----------|-------|
-| **Dimensions** | [L] × [W] × [H] mm |
-| **Weight** | ~[X] kg |
-| **Drive Type** | Rear-wheel drive with 12V DC geared encoder motor |
+| **Dimensions** | [190] × [120] × [300] mm |
+| **Weight** | ~[1.310] kg |
+| **Drive Type** | Rear-wheel drive, 12V DC geared motor + external quadrature encoder |
 | **Steering** | Servo-actuated Ackermann geometry |
 | **Primary Brain** | Raspberry Pi 4 Model B (4 GB) |
 | **Co-processor** | Seeed XIAO ESP32-C3 (IMU + encoder over USB UART) |
 | **Vision** | USB Camera + OpenCV HSV pipeline (no Edge TPU) |
-| **Spatial Awareness** | VL53L0X ToF sensor ×4 (point ranging, Pi I2C bus) |
+| **Distance Sensor** | 1× TFmini Plus LiDAR (right side, UART, parking only) |
 | **Heading** | Adafruit BNO085 9-DOF IMU (on XIAO, I2C) |
-| **Max Operating Speed** | ~95% PWM duty cycle (~[X] m/s measured) |
+| **Max Speed** | ~90% PWM duty cycle |
+
+### Performance Specifications
+
+| Metric | Value |
+|--------|-------|
+| **Max theoretical speed** | ~[2] m/s (from 900RPM + wheel diameter) |
+| **Operational speed** | ~[2.703] m/s (90% PWM, closed-loop) |
+| **Battery capacity** | [850] mAh LiPo |
+| **Camera FPS (live loop)** | ~25 FPS (with `cv2.imshow` disabled) |
+| **IMU update rate** | 100Hz (BNO085 Euler output) |
+| **UART baud rate** | 115200 (XIAO → Pi) |
 
 ---
 
@@ -124,68 +200,86 @@ Both challenges are Time Attack format — one vehicle at a time, scored on laps
 
 ### Component List
 
-| Component | Image | Specifications | Role in Robot | Source |
-|-----------|-------|---------------|---------------|--------|
-| **Raspberry Pi 4 Model B (4GB)** | ![RPi4](other/raspberry_pi4.png) | Quad-core Cortex-A72 @ 1.8GHz, 4 GB LPDDR4, USB 3.0, GPIO 40-pin | Main compute — runs vision (Edge TPU ML), LiDAR parsing, servo/motor PID control via pigpio | [robu.in](https://robu.in/product/raspberry-pi-4-model-b-with-4-gb-ram/) |
-| **Seeed XIAO ESP32-C3** | ![XIAO](other/xiao_esp32c3.png) | ESP32-C3 RISC-V single-core @160MHz, 400KB SRAM / 4MB Flash, 11× GPIO (PWM), 4× ADC, 1× I2C, UART @115200 baud, USB-C, 3.3V logic, 21×17.5mm | Co-processor — reads BNO085 IMU over a dedicated 3.3V I2C bus and the drive-motor quadrature encoder, streams fused heading + encoder counts to the Pi over USB UART at 115200 baud (`/dev/XIAO_USB`). Isolates timing-critical encoder counting from the Pi's non-real-time scheduler | [robu.in](https://robu.in/product/seeed-studio-xiao-esp32c3/) |
-| **VL53L0X ToF (×4)** | ![VL53L0X](other/Vl530X.png) | Range: 0.03–2m, Accuracy: ±3% (<1.2m indoor), FOV 25°, I2C 400kHz (addr 0x29, volatile), timing budget 20–200ms, 2.6–3.5V | Point-range sensors on the shared Pi I2C bus: [FILL IN: front / left / right / rear roles]. Per-sensor XSHUT lines for boot-time address assignment and fault isolation | [Robu.in](https://robu.in/product/vl53l0x-tof-based-lidar-laser-distance-sensor/?gad_source=1&gad_campaignid=20363337560&gbraid=0AAAAADvLFWfotmxaIMn2p8HarXqqe6Nff&gclid=Cj0KCQjwguLSBhDLARIsAH-yPrFK-kzvw4y6FspLzuAcA_oIxhydmxn_V0OlvkelbwEPyBRH6SLhxZoaAjEbEALw_wcB) |
-| **Adafruit BNO085 IMU** | ![BNO085](other/bno085.jpg) | 9-DOF (accel + gyro + mag), onboard ARM Cortex-M0 fusion, Euler output at 100Hz, I2C | Absolute heading for PID steering correction; prevents drift accumulation across all 3 laps | [evelta.com](https://evelta.com/adafruit-bno085-9-dof-orientation-imu-fusion-breakout/?sku=076-4754&utm_source=google&utm_campaign=20308067004&utm_medium=cpc&utm_content=&utm_term=&gad_source=1&gad_campaignid=20317564702&gbraid=0AAAAADwtsXnePMHtpbMiYnB4cO9_u_84B&gclid=Cj0KCQjwguLSBhDLARIsAH-yPrFOSs2EfI8E-wKMQBoJWDIA7mjCOec-1VZXfBmPrgCMb-ZPmXS2ELQaAu9GEALw_wcB) |
-| **USB Camera** | ![Camera](other/camera_ds_u02.png) | 2MP, 1080P @ 30fps, ultra-wide angle, USB 2.0, manual focus | Input for OpenCV HSV-based colour detection pipeline (`vision_pipeline_new.py`) — detects red/green pillar blocks, magenta parking markers, orange/blue floor lines, and black wall boundaries. No ML accelerator required. Exposure is fixed (`CAP_PROP_EXPOSURE = -6`) and buffer is capped at 1 frame to minimise detection latency | [amazon.in](https://www.amazon.in/HIKVISION-DS-U02-Distortion-Adjustment-Conferencing/dp/B0929FSQ2J) |
-| **Rhino GB37 12V 1000RPM Encoder Motor** (RMCS-4091) | ![GB37](other/Rhino_1000.jpg) | 12V DC, 1000RPM (no-load), 0.7 kg·cm, 37mm spur gearbox, D-type output shaft, quadrature encoder (SPEED_SCALE ≈ 2447 counts/sec at full duty), all-metal construction | Rear-wheel drive via MDD3A driver (PIN_A = GPIO16, PIN_B = GPIO20) under pigpio PWM. Quadrature encoder feeds the XIAO ESP32-C3 for closed-loop speed PID (`correctSpeed`) and odometry (`counts` shared value) | [robokits.co.in](https://robokits.co.in/motors/rhino-gb37-12v-dc-geared-motor/dc-12v-encoder-servo-motors/rhino-gb37-12v-1000rpm-0.7kgcm-dc-geared-encoder-servo-motor) |
+| Component | Image | Specifications | Role | Source |
+|-----------|-------|---------------|------|--------|
+| **Raspberry Pi 4 Model B (4GB)** | ![RPi4](other/raspberry_pi4.png) | Quad-core Cortex-A72 @ 1.8GHz, 4 GB LPDDR4, USB 3.0, GPIO 40-pin | Main compute — vision, sensor fusion, PID control via pigpio | [robu.in](https://robu.in/product/raspberry-pi-4-model-b-with-4-gb-ram/) |
+| **Seeed XIAO ESP32-C3** | ![XIAO](other/xiao_esp32c3.png) | ESP32-C3 RISC-V @160MHz, 400KB SRAM, USB-C, 3.3V logic, 21×17.5mm | Co-processor — BNO085 IMU + external encoder, streams to Pi at 115200 baud | [robu.in](https://robu.in/product/seeed-studio-xiao-esp32c3/) |
+| **Benewake TFmini Plus LiDAR ×1** | ![TFmini Plus](other/tfmini_plus.png) | 0.1–12m, ±5cm accuracy, 3.6° FOV, UART 115200, 5V, IP65, 42×15×16mm | Right-side parking proximity — when `distance < 150mm` parking approach confirmed | [robu.in](https://robu.in/product/tfmini-plus-lidar-distance-sensor-for-drones-uav-uas-robots-12m/) |
+| **Adafruit BNO085 IMU** | ![BNO085](other/bno085.jpg) | 9-DOF, ARM Cortex-M0 fusion, Euler @100Hz, I2C | Absolute heading for PID steering — prevents drift across all 3 laps | [evelta.com](https://evelta.com/adafruit-bno085-9-dof-orientation-imu-fusion-breakout/) |
+| **USB Camera** | ![Camera](other/camera_ds_u02.png) | 2MP, 1080P @ 30fps, ultra-wide, USB 2.0 | HSV pipeline input — detects pillars, parking markers, floor lines, walls | [amazon.in](https://www.amazon.in/HIKVISION-DS-U02-Distortion-Adjustment-Conferencing/dp/B0929FSQ2J) |
+| **Johnson 900RPM Grade A** (RKI-1142) | ![Johnson900](other/johnson_motor.png) | 12V DC, 900RPM no-load, high-torque grade-A gearbox, no built-in encoder | Rear-wheel drive via Vikram-453R6. External encoder on output shaft | [robokits.co.in](https://robokits.co.in/motors/dc-motor/12v-johnson-motors/johnson-geared-dc-motors/johnson-motor-high-torque-dc-geared-12v-900rpm-grade-a) |
+| **7Semi Vikram-453R6** | ![Vikram453R6](other/vikram_453r6.png) | DRV8871, 6.5–45V, 2A cont / 3.6A peak, IN1/IN2 PWM, thermal protection | Motor driver — IN1=GPIO16, IN2=GPIO20. Auto-recovery on overcurrent | [7semi.com](https://7semi.com/7semi-vikram-453r6-dc-motor-driver-breakout-6-5v-45v-input-3-6a-single-channel/) |
+
+**Component Selection Philosophy:** We prioritize components that are widely available in India, well-documented, and separable by concern — the Pi handles vision and decisions, the XIAO handles timing-critical encoder counting, and the TFmini Plus handles parking proximity without sharing the I2C bus. Every component was chosen because it solves a specific, tested problem.
+
 ### Power Architecture
 
-The robot uses a **dual-rail power system** — one rail for electronics and one for the motor. This separation is critical: the motor causes PWM-induced voltage spikes that corrupt sensor readings when sharing a supply rail. We learned this the hard way during early testing where BNO055 readings would glitch during rapid acceleration.
+The robot uses a **dual-rail power system** — motor on 12V direct, all electronics on regulated 5V. This was non-negotiable after early testing showed motor PWM spikes causing 40°+ BNO085 heading jumps on a single-rail setup.
 
 ```
 [12V LiPo Battery]
        |
-       ├── [MDD3A Motor Driver (PIN_A=GPIO16, PIN_B=GPIO20)] ──> Rhino GB37 1000RPM Motor
+       ├── [Vikram-453R6 (IN1=GPIO16, IN2=GPIO20)] ──> Johnson 900RPM Motor
        |
-       └── [5V Buck Converter / Regulator]
+       └── [5V Buck Converter]
                    |
                    ├── Raspberry Pi 4 (5V/3A USB-C)
-                   │       └── [Pi 3V3 rail] ──> VL53L0X ×4 (I2C, XSHUT: GPIO23/24/25/27)
-                   ├── Servo Motor (dedicated UBEC/buck ≥5A, DS 35kg·cm class)
-                   └── Seeed XIAO ESP32-C3 (via USB-C from Pi)
-                           └── [XIAO 3V3 rail] ──> BNO085 IMU (I2C, XIAO-exclusive)
-                                                    Quadrature Encoder (GPIO)
+                   │       └── [Pi UART /dev/ttyAMA1] ──> TFmini Plus right (5V)
+                   ├── Servo UBEC (dedicated ≥5A)
+                   │       └── DS3235 servo signal → GPIO8
+                   └── Seeed XIAO ESP32-C3 (via Pi USB-C)
+                           └── [XIAO 3V3 rail] ──> BNO085 IMU (I2C)
+                                                    External encoder (GPIO)
 
-[I2C Bus — XIAO exclusive] XIAO ←→ BNO085 (3.3V logic)
-[I2C Bus — Pi exclusive]   Pi   ←→ VL53L0X ×4 (3.3V logic, per-sensor XSHUT isolation)
-[UART 115200]              XIAO → Pi (/dev/XIAO_USB) — heading (float) + encoder counts (int)
-[USB]                      Pi   ← Camera (UVC /dev/video0)
+[I2C — XIAO only]     XIAO ←→ BNO085 (3.3V)
+[UART — Pi ttyAMA1]   TFmini Plus right → Pi
+[UART — Pi XIAO_USB]  XIAO → Pi — heading (float) + counts (int)
+[USB]                 Camera → Pi /dev/video0
 ```
 
-**Power budget estimate:**
+**Power budget:**
 
-| Component | Voltage | Typical Current |
-|-----------|---------|-----------------|
-| Rhino GB37 1000RPM Motor (loaded) | 12V | 300mA typical (stall: ~1.0–1.3A est.) |
+| Component | Voltage | Current |
+|-----------|---------|---------|
+| Johnson 900RPM (loaded) | 12V | ~400mA typical, ~2A stall |
 | Raspberry Pi 4 | 5V | 1.0–1.5A |
-| Seeed XIAO ESP32-C3 | 5V (via Pi USB) | 25–40mA |
-| VL53L0X sensor ×4 | 3.3V (Pi rail) | 4 × 19mA = 76mA |
-| DS 35kg·cm servo | 5–6V (dedicated UBEC) | 5mA idle, ~2.0A stall |
-| **Total (peak, referred to 12V pack)** | — | **~3.3A** |
+| XIAO ESP32-C3 | 5V via Pi USB | 25–40mA |
+| TFmini Plus ×1 | 5V | 110mA avg |
+| DS3235 servo | 5–6V UBEC | 5mA idle, ~2A stall |
+| **Total peak (referred to 12V)** | — | **~3.0A** |
 
 ### Wiring Diagram
 
-**![system wiring](schemes/wiring_diagram.png)**
+<div align="center">
+  <img src="schemes/wiring_diagram.png" width="900">
+</div>
 
+### GPIO Pin Assignment
+
+| GPIO / Interface | Function | Direction |
+|-----------------|----------|-----------|
+| GPIO6 | Kill switch input | IN |
+| GPIO8 | DS3235 servo PWM | OUT |
+| GPIO13 | Red LED | OUT |
+| GPIO16 | Vikram IN1 — forward PWM | OUT |
+| GPIO19 | XIAO reset | OUT |
+| GPIO20 | Vikram IN2 — reverse PWM | OUT |
+| GPIO26 | Blue LED | OUT |
+| /dev/ttyAMA1 | TFmini Plus right (UART RX) | IN |
+| /dev/XIAO_USB | XIAO ESP32-C3 (UART) | IN/OUT |
+| /dev/video0 | USB camera | IN |
 
 ### Sensor Placement Rationale
 
-Every sensor placement was deliberate and tested before being finalized:
+**TFmini Plus — Right side (`/dev/ttyAMA1`):** Mounted at 60mm from ground on the right flank, perpendicular to travel. Used only during parking approach. Its 3.6° laser spot reads the outer wall cleanly — the VL53L0X it replaced had a 25° FOV that picked up floor reflections below 80mm. Mounting at 30mm initially caused this problem; 60mm resolved it.
 
-**Vl530x — Head (GPIO 23):** Mounted front-center facing forward. Detects approaching inner or outer wall during straight sections. Turn is triggered when the front distance drops below a threshold (950mm for obstacle challenge, adjusted per phase). We initially placed this sensor angled 15° downward, which caused premature ground reflections at distances under 80cm. Moving it to horizontal mount fixed false triggers.
+**Camera:** Front-facing, slight downward angle. Exposure fixed at `CAP_PROP_EXPOSURE = -6` — without this, auto-exposure flicker between light/dark mat sections caused false negatives on every orange line crossing.
 
-**Vl530x — Left (GPIO 24) & Right (GPIO 25):** Mounted at mid-body height on the left and right flanks. Used for: (a) initial direction detection in the Open Challenge by reading which side has >100mm clearance, (b) wall-follow PID correction when no block is detected, (c) parking confirmation when the side distance drops below 25mm. The separation between left and right is the reason we can reliably detect which side of the track the robot starts on.
+**BNO085 IMU:** On the XIAO, powered from XIAO 3V3 only, positioned ≥80mm from the Johnson motor and Vikram driver. At 40mm we measured 3° drift per stall event — moving to 80mm eliminated this.
 
-**Vl530x — Back (GPIO 27):** Mounted rear-facing. Used during reverse parking maneuvers to sense wall approach from behind, preventing collisions during the multi-stage parking sequence.
+### Power Management — Engineering Note
 
-
-**Camera:** Mounted front-facing, angled slightly downward and backwards to capture traffic signs as the robot approaches. Exposure is manually fixed (`CAP_PROP_EXPOSURE = -6`) to prevent auto-exposure flicker when transitioning between light and dark sections of the track — a major source of false negatives during early testing.
-
-**BNO085 IMU:** Mounted flat on the XIAO ESP32-C3 board, away from the motor and motor driver to minimize magnetic interference from the motor's commutator. The BNO085 is powered exclusively from the XIAO's 3.3V rail (isolated from the Pi's rail) to prevent EMI-induced heading glitches. We measured a consistent 3° heading drift during stall-condition motor tests with the IMU within 40mm of the motor. Moving it 80mm away eliminated this.
+During early testing we found the Pi's 3V3 rail was insufficient to power the BNO085 cleanly when the motor was under load. The fix was to power the BNO085 exclusively from the XIAO's own 3V3 regulator, which is isolated from the Pi's rail entirely. This is why the XIAO is powered via USB from the Pi (5V) but the BNO085 never touches the Pi's 3V3 pin.
 
 ---
 
@@ -193,329 +287,317 @@ Every sensor placement was deliberate and tested before being finalized:
 
 ### Chassis Design
 
-**PLACEHOLDER: `models/chassis_overview.jpg`**
+<div align="center">
+<img src="models/gif_1.gif" alt="bot view 1" height="325">
+<img src="models/gif_2.gif" alt="bot view 1" height="325">
+</div>
+The chassis and electronics tray are laser-cut or CNC-cut from polycarbonate sheet (6mm chassis, 3mm tray) — not 3D printed. The rear axle is driven by the Johnson 900RPM motor via direct coupling. The front axle uses Ackermann-geometry steering actuated by the DS3235 servo.
 
-The chassis is built on a [custom fabricated / RC car base — fill in]. The rear axle is driven by the Johnson 600RPM motor through a [direct coupling / gear reduction — fill in]. The front axle uses Ackermann-geometry steering actuated by a servo motor.
-
-**Why Ackermann geometry?** A parallel steering linkage (where both front wheels turn by the same angle) causes the inner wheel to skid on tight turns because each wheel follows a different radius. Ackermann geometry adjusts each wheel's angle independently so both track their respective arc centers — reducing tire scrub, preserving traction, and improving the predictability of the turn radius for PID tuning.
+**Why Ackermann geometry?** A parallel steering linkage makes the inner wheel skid on tight turns because each wheel follows a different radius. Ackermann geometry gives each wheel a slightly different angle so both track their own arc — less tyre scrub, more predictable turn radius, and smoother PID tuning.
 
 **Turning radius calculation:**
 
 ```
-Wheelbase (L)     = [X] mm
-Track width (T)   = [Y] mm
-Max servo angle   = [Z] degrees
+Wheelbase (L)    = [102] mm
+Track width (T)  = [102] mm
+Max servo angle  = 45°
 
-Inner wheel angle:  δ_inner = arctan(L / (R - T/2))
-Outer wheel angle:  δ_outer = arctan(L / (R + T/2))
-Minimum turn radius R_min ≈ [calculated value] mm
+Inner wheel angle: δ_inner = arctan(L / (R - T/2))
+Outer wheel angle: δ_outer = arctan(L / (R + T/2))
+R_min ≈ [153] mm
 ```
-
-This minimum turn radius was critical — the inner wall during a 600mm-wide corridor leaves very little margin. Our first chassis prototype had a wheelbase of [X]mm which gave R_min of [Y]mm, too large to reliably exit tight corridors. We shortened the wheelbase to [Z]mm in iteration 2, reducing R_min to [W]mm, which cleared the constraint.
 
 ### Drive System
 
-**Motor Selection Reasoning:** We evaluated several motor options and settled on the Rhino GB37 12V 1000RPM encoder motor for the current season:
+**Motor Selection:**
 
 | Option | RPM | Torque | Verdict |
 |--------|-----|--------|---------|
 | Johnson 300 RPM | 300 | ~8 kg·cm | Too slow for sub-60s laps |
-| Johnson 600 RPM | 600 | 4.5 kg·cm | Used in prior season; adequate but limited top speed |
-| **Rhino GB37 1000RPM ✓** | **1000** | **0.7 kg·cm** | **Current choice — higher speed, closed-loop speed PID compensates for torque reduction** |
+| Johnson 600 RPM | 600 | 4.5 kg·cm | Prior season — adequate but limited top speed |
+| Rhino GB37 1000RPM | 1000 | 0.7 kg·cm | Tested — stalled at low PWM, insufficient torque |
+| **Johnson 900RPM Grade A ✓** | **900** | **High** | **Current — best torque/speed balance, external encoder added** |
 
-At 1000 RPM with a wheel diameter of approximately [D] mm:
+**Drive train calculation:**
 
 ```
+Motor speed    = 900 RPM
+Wheel diameter = [44] mm
+
 Linear speed = (RPM / 60) × π × D
-             = (1000 / 60) × π × [D/1000]
-             ≈ [X] m/s at 100% PWM
+             = (900 / 60) × π × [44/1000]
+             ≈ [2.073] m/s at 100% PWM
 ```
 
-We operate the motor under closed-loop speed PID (`correctSpeed`) with a `SPEED_SCALE` of ~2447 counts/sec at full duty on a fresh battery. The speed PID (positional form, `kp_v`/`ki_v`/`kd_v` hot-reloaded from `gains.json`) corrects duty cycle to maintain a target speed regardless of battery voltage sag. The quadrature encoder feeds the XIAO ESP32-C3 which streams signed counts to the Pi over UART for both speed control and odometry. **Note:** the Open Challenge does not use speed PID — it runs a simple exponential smoothing ramp (`power * 0.01 + prev_power * 0.99`) at 85% target duty, which is sufficient for the simpler wall-following task.
+The Johnson 900RPM has no built-in encoder. An external quadrature encoder is mounted on the output shaft and read by the XIAO ESP32-C3. `SPEED_SCALE` (counts/sec at 100% duty) must be calibrated from run logs before enabling `ki_v` or `kd_v`.
+
+**Motor Driver:** The Vikram-453R6 (DRV8871) replaced the MDD3A after two driver failures — the MDD3A has no overcurrent protection. The DRV8871 adds hardware overcurrent detection, thermal shutdown, and auto-recovery. Its 45V ceiling handles inductive spikes. The IN1/IN2 PWM interface is pin-compatible with MDD3A so no code changes were needed.
+
+### Structural Analysis
+
+| Metric | Value |
+|--------|-------|
+| Chassis material | 6mm polycarbonate (laser/CNC cut) |
+| Electronics tray | 3mm polycarbonate |
+| Motor mount hardware | M3 bolts |
+| Servo mount | Press-fit into servo bay |
+| TFmini Plus mount | `tf mini mount horizontal.STL` at 60mm height |
+| Camera tilt | Fixed 10° downward (`new camera mount.STL`) |
 
 ### Iteration History
 
-**PLACEHOLDER: `models/iteration_comparison.jpg`** — Side-by-side of v1 and v2 chassis
+<div align="center">
+  <img src="models/Comparisons.png" width="400" height = "600">
+</div>
 
-**Version 1 (Regional):**
-- RC car base with unmodified steering geometry
-- Single front TOF sensor — turn detection relied purely on distance threshold
-- Arduino Mega co-processor for IMU + encoder
+**Version 1 — National 2025:**
+- Raspberry Pi + Arduino Mega co-processor
 - Google Coral Edge TPU for object detection (TFLite quantized model)
-- Problem: Could not reliably distinguish narrow vs. wide corridors; missed turns in tight sections
+- RPLidar C1 for turn detection
+- Johnson 600RPM motor, MDD3A driver
+- Problem: Parking unreliable — single-pass approach overshot; LiDAR subprocess complex and slow
 
-**Version 2 (National):**
-- Added RPLidar C1 for reliable turn detection (compound condition: front <950mm + open side >1500mm)
-- Added left + right TOF sensors for wall-follow PID
-- Remounted camera with fixed exposure; removed inline `cv2.imshow` for full-speed capture
-- Problem: Parking was unreliable — single-pass approach often overshot; LiDAR subprocess added complexity
+**Version 2 — Nationals 2026 (Current):**
+- Replaced Arduino Mega + Coral TPU + RPLidar with leaner stack:
+  - **XIAO ESP32-C3** — BNO085 IMU + external encoder over USB UART
+  - **1× TFmini Plus** (right only) — parking proximity over UART
+  - **OpenCV HSV pipeline** — replaces Edge TPU ML model entirely
+- Switched to **Johnson 900RPM Grade A** + external encoder
+- Switched to **Vikram-453R6** (DRV8871) — overcurrent protection
+- Camera FPS improved from ~5 to ~25 by removing `cv2.imshow` from live loop
+- Hot-reloadable `gains.json` — change PID gains without restarting
 
-**Version 3 (World Final — Current):**
-- Replaced Arduino Mega + Coral Edge TPU + RPLidar C1 with a leaner stack:
-  - **Seeed XIAO ESP32-C3** handles IMU (BNO085) + encoder over USB UART
-  - **4× VL53L0X ToF** replace the LiDAR (front/left/right/rear point distances)
-  - **OpenCV HSV pipeline** replaces Edge TPU ML model
-- Switched to **Rhino GB37 1000RPM** encoder motor with closed-loop speed PID
-- Multi-stage parking state machine driven by camera black-zone detections (`park_wall`, `last_wall`)
-- Hot-reloadable `gains.json` for live PID tuning without restarts
-- Dual-rail power, per-sensor XSHUT I2C isolation, and EMI separation resolved sensor noise
+### Potential Future Improvements
+
+- Switch to a motor with a built-in encoder to eliminate the external encoder mount complexity
+- Add a rear-facing camera or second TFmini for reverse safety during parking
+- Replace polycarbonate tray with a custom PCB carrier for better wire management
+- Implement automatic `SPEED_SCALE` calibration from the first run's log file
 
 ---
 
 ## 💻 Software Architecture
 
-The software runs on the Raspberry Pi 4 using Python's `multiprocessing` module. Each major function runs as a separate OS process with its own memory space, communicating exclusively through `multiprocessing.Value` shared variables. This design prevents a slow vision inference cycle from blocking the time-critical steering loop.
+The software runs on the Raspberry Pi 4 using Python's `multiprocessing` module. Four OS processes run concurrently on separate CPU cores, communicating via `multiprocessing.Value` shared memory. This prevents slow camera inference from blocking the time-critical steering loop.
 
 ### Process Architecture
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                    Main Process                      │
-│       Spawns all child processes, then exits        │
-└──────┬──────────────┬──────────────┬────────────────┘
-       │              │              │              │
-┌──────▼──────┐ ┌─────▼──────┐ ┌────▼──────┐ ┌───▼────────────┐
-│CameraProcess│ │IMUandEncoder│ │TOFProcess │ │ DriveProcess   │
-│  (P)        │ │  (E)        │ │  (T)      │ │  (S) MAIN LOOP │
-│ OpenCV HSV  │ │ /dev/XIAO   │ │ VL53L0X×4 │ │ Reads ALL      │
-│ pipeline    │ │ _USB UART   │ │ Pi I2C    │ │ shared vars    │
-│ → red_b     │ │ → head.value│ │→tof_front │ │ PID steering   │
-│ → green_b   │ │ →counts.val │ │→tof_left  │ │ Speed PID      │
-│ → pink_b    │ │             │ │→tof_right │ │ State machine  │
-│ → centr_x/y │ │             │ │→tof_rear  │ │ Motor + servo  │
-│ → wall_left │ │             │ │           │ │ control        │
-│ → wall_right│ │             │ │           │ │                │
-└─────────────┘ └─────────────┘ └───────────┘ └────────────────┘
+┌──────────────────────────────────────────────────────┐
+│                     Main Process                      │
+│          Spawns all child processes, exits            │
+└──────┬──────────────┬────────────────┬───────────────┘
+       │              │                │              │
+┌──────▼──────┐ ┌─────▼──────┐ ┌──────▼──────┐ ┌────▼───────────┐
+│CameraProcess│ │IMUandEncoder│ │ TOFProcess  │ │  DriveProcess  │
+│  (P)        │ │  (E)        │ │  (T)        │ │  (S) MAIN LOOP │
+│ OpenCV HSV  │ │ /dev/XIAO   │ │ spawned but │ │ Reads ALL      │
+│ pipeline    │ │ _USB UART   │ │ TFmini read │ │ shared memory  │
+│ → red_b     │ │ → head.value│ │ directly in │ │ PID steering   │
+│ → green_b   │ │ →counts.val │ │ DriveProcess│ │ Speed PID      │
+│ → pink_b    │ │             │ │             │ │ State machine  │
+│ → wall_*    │ │             │ │             │ │ Motor + servo  │
+└─────────────┘ └─────────────┘ └─────────────┘ └────────────────┘
 ```
 
-**Shared variables (cross-process, lock-protected):**
+> **Note on TFmini Plus:** The TFmini Plus is instantiated as `TFmini(17, 27, 25, 24)` inside `DriveProcess` and polled directly via `tfmini.getTFminiData()` each loop. It is not routed through `TOFProcess` — `distance_head` is read as `tf_l` directly in the drive loop.
+
+**Why multiprocessing over threading?** Python's GIL prevents threads from running CPU-bound tasks truly in parallel. `multiprocessing` spawns real OS processes — each with its own GIL — so `CameraProcess` (OpenCV) and `IMUandEncoder` (UART reads) run on separate Pi 4 cores simultaneously.
+
+### Shared Variables (cross-process, lock-protected)
 
 | Variable | Type | Written by | Read by | Purpose |
 |----------|------|-----------|---------|---------|
-| `head` | float | IMUandEncoder | DriveProcess, CameraProcess | IMU heading (degrees) from BNO085 via XIAO |
-| `counts` | int | IMUandEncoder | DriveProcess | Quadrature encoder pulse count for odometry and speed PID |
+| `head` | float | IMUandEncoder | DriveProcess | IMU heading (°) from BNO085 |
+| `counts` | int | IMUandEncoder | DriveProcess | Encoder count for odometry + speed PID |
 | `red_b` | bool | CameraProcess | DriveProcess | Red pillar visible |
 | `green_b` | bool | CameraProcess | DriveProcess | Green pillar visible |
 | `pink_b` | bool | CameraProcess | DriveProcess | Magenta parking marker visible |
-| `centr_x/y` | float | CameraProcess | DriveProcess | Closest green/red pillar centroid |
+| `centr_x/y` | float | CameraProcess | DriveProcess | Green pillar centroid |
 | `centr_x_red/y_red` | float | CameraProcess | DriveProcess | Red pillar centroid |
 | `centr_x_pink/y_pink` | float | CameraProcess | DriveProcess | Pink marker centroid |
-| `wall_left/right` | double | CameraProcess | DriveProcess | Inner wall detection flags (from black HSV zones) |
-| `outer_wall_left/right` | double | CameraProcess | DriveProcess | Outer wall detection flags |
-| `close_wall` | double | CameraProcess | DriveProcess | Close black wall area (for turn/parking logic) |
-| `park_wall` | double | CameraProcess | DriveProcess | Parking wall area (black HSV, parking zone) |
-| `orange_l / blue_l` | bool | CameraProcess | DriveProcess | Floor line colour for lap direction detection |
-| `tof_front/left/right/rear` | double | TOFProcess | DriveProcess | VL53L0X distance readings (mm) for turn detection, wall-follow, and parking |
-| `switch_state` | bool | CameraProcess | DriveProcess | Kill-switch state shared to camera for early exit |
+| `wall_left/right` | double | CameraProcess | DriveProcess | Inner wall centroid-X |
+| `outer_wall_left/right` | double | CameraProcess | DriveProcess | Outer wall centroid-X |
+| `close_wall` | double | CameraProcess | DriveProcess | Close wall area — turn/parking |
+| `park_wall` | double | CameraProcess | DriveProcess | Parking wall area |
+| `last_wall` | double | CameraProcess | DriveProcess | End-wall area — parking trigger + open stop |
+| `orange_l / blue_l` | bool | CameraProcess | DriveProcess | Floor line colour — lap direction |
+| `switch_state` | bool | DriveProcess | CameraProcess | Kill-switch state |
+
+### XIAO UART Protocol
+
+The XIAO ESP32-C3 firmware streams sensor data to the Pi at 115200 baud:
+
+**Output format (every loop):**
+```
+<heading_float> <encoder_int>\n
+Example: 91.34 2841
+```
+
+**Commands accepted from Pi:**
+
+| Command | Effect |
+|---------|--------|
+| `b"R"` | Software reset — reboots XIAO and reinitialises BNO085 |
+| `b"1"` | Zero the encoder count |
 
 ### PID Steering Control (`correctAngle`)
 
-Steering is controlled by a proportional-derivative (PD) controller. The integral term `ki` is set to 0 in the obstacle challenge to avoid windup during block avoidance transitions — a lesson learned after the robot over-corrected and hit a wall when ki was non-zero.
-
 ```python
-# Core PID (from correctAngle)
 error_gyro = heading - setPoint_gyro
 if error_gyro > 180:
-    error_gyro -= 360          # Handle angle wraparound
+    error_gyro -= 360           # handle wraparound
 
 pTerm = kp * error_gyro * multiplier   # kp = 0.6
 dTerm = kd * ((error_gyro - prevErrorGyro) / dt)  # kd = 0.01
 correction = pTerm + dTerm
-correction = max(-25, min(25, correction))  # clamp
+correction = max(-25, min(25, correction))
 
-servo.setAngle(95 - correction)  # 95° is mechanical center
+servo.setAngle(95 - correction)   # 95° = mechanical centre (obstacle)
+                                  # 90° = mechanical centre (open)
 ```
 
-The `multiplier` parameter scales aggressiveness: `1.0` for normal straight-line heading hold, `1.5` for block-tracking and most driving situations, `3.0` for tight parking turns. This avoids having multiple PID instances for the same physical task. `correctReverseAngle` mirrors the same structure but applies correction in the opposite servo direction (`95 + correction`) for reverse maneuvers.
+`multiplier` values: `1.0` = straight-line hold, `1.5` = normal driving, `3.0` = tight parking turns. `correctReverseAngle` uses `95 + correction` for reverse maneuvers.
 
-### Obstacle Avoidance — Centroid PD Control
-
-Pillar avoidance does not use dead-reckoning or `setPoint` position control. Instead, `DriveProcess` computes a servo correction directly from the detected pillar's pixel centroid (`centr_x` for green, `centr_x_red` for red) using a PD controller on the image error:
+### Obstacle Avoidance — Centroid PD
 
 ```python
-# err = pixel offset from target centroid position
+# Target centroid X positions for each colour + state
 if green_b.value:
-    if obstacle_state == 1:   # block still far
-        err = 350 - centr_x   # steer to pass left of green
-    elif obstacle_state == 2: # block is close
-        err = 560 - centr_x
+    err = 340 - centr_x          # state 1 (far)
+    err = 520 - centr_x          # state 2 (close, centr_y > 100)
+    # blue direction + wall visible: 320 / 470
 elif red_b.value:
-    if obstacle_state == 1:
-        err = 290 - centr_x_red  # steer to pass right of red
-    elif obstacle_state == 2:
-        err = 80 - centr_x_red
+    err = 300 - centr_x_red      # state 1
+    err = 120 - centr_x_red      # state 2
+    # orange direction + wall visible: 320 / 170
 
-# PD on centroid error (kp_s, kd_s from gains.json)
 servo_angle = err * kp_s + ((err - prev_err) / dt_main) * kd_s
-servo_angle = max(-35, min(35, servo_angle))
+servo_angle = max(-30, min(30, servo_angle))
 servo.setAngle(95 - servo_angle)
 ```
 
-`obstacle_state` switches from 1 → 2 when `centr_y > 100` (block is close, larger in frame), sharpening the avoidance offset. It resets back to 1 once the block exits the close zone or a pink/wall boundary is detected nearby. When no block is visible, wall-correction uses `wall_left`/`wall_right` centroid-X to apply a fixed `err = ±15` nudge toward center.
+State 2 lasts 0.08s then resets to state 1, or resets early when `centr_y_pink > 100` or `close_wall > 50`. When no block is visible and one inner wall is detected, a fixed `±15` err nudge centers the robot. When outer walls are visible without blocks, heading is corrected by `heading_angle ± 5°`.
 
-### TOF Turn Detection (`TOFProcess`)
+### Speed PID (`correctSpeed`)
 
-The `TOFProcess` runs 4× VL53L0X sensors on the Pi's I2C bus with per-sensor XSHUT isolation (GPIO 23/24/25/27). Sensors are assigned unique I2C addresses at boot time by sequentially un-shutting each sensor and remapping its address — pulling all XSHUT lines low during a single-sensor recovery would corrupt the other sensors' volatile addresses, so each sensor is isolated individually.
-
-Turn detection in `DriveProcess` uses the shared `tof_front` and `tof_left`/`tof_right` readings:
+Positional PID — output recomputed fresh each call, not accumulated:
 
 ```python
-# Turn condition (example — CW/CCW logic applies Orange/Blue):
-if tof_front.value < 950 and (tof_right.value > 1500 or tof_left.value > 1500):
-    # wall ahead + open corridor beside → genuine corner
-    counter += 1
-    heading_angle += 90  # or -=90 for CCW
+actual_cps = raw_delta / dt           # encoder counts per second
+target_cps = target_power_pct * SPEED_SCALE / 100.0
+error = target_cps - actual_cps
+
+total_error_speed += error * dt
+total_error_speed = max(-500, min(500, total_error_speed))   # anti-windup
+
+correction = kp_v * error + ki_v * total_error_speed + kd_v * (error - prev_error) / dt
+duty = target_power_pct + correction   # baseline + correction — NOT accumulated
+duty = max(0.0, min(100.0, duty))
 ```
 
-The 20ms timing budget (reduced from the 33ms default for polling speed) is validated for normal ranges; distances under ~20cm may under-report due to the reduced budget and are flagged in test logs.
+Auto-resets on direction flip. `SPEED_SCALE` must be calibrated from run logs — the default in `gains.json` is `0.0` as a reminder.
+
+### Vision Pipeline
+
+`CameraProcess` runs either `vision_pipeline_new.py` (obstacle) or `vision_pipeline_3.py` (open). Both are pure OpenCV — no ML accelerator.
+
+**Pipeline steps:**
+1. Capture frame via `cap.read()` — buffer size = 1 so always latest frame
+2. Resize to `FRAME_WIDTH × FRAME_HEIGHT`
+3. Convert to HSV (and LAB if `USE_LAB = True`)
+4. Threshold per colour class per zone
+5. Find contours, filter by area minimum
+6. For each zone: pick largest blob by area (or lowest by centroid-Y = closest)
+7. Write centroid/area/flag to shared memory
+
+**Camera settings:**
+```python
+cap.set(cv2.CAP_PROP_EXPOSURE, -6)   # fixed — no flicker on mat transitions
+cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)  # always newest frame — critical at 25fps
+```
+
+| Colour | Zones | Role |
+|--------|-------|------|
+| Red | `main`, `close` | Red pillar |
+| Green | `main`, `close` | Green pillar |
+| Magenta | `main`, `close` | Parking lot boundary |
+| Orange | `line`, `line_2` | CW floor line |
+| Blue | `line`, `line_2` | CCW floor line |
+| Black | `wall_inner_left/right`, `wall_left/right`, `close_black`, `parking_wall`, `last_wall`, `last_wall_2` | Walls + parking zones |
+
+When red and green are both visible, the closer one (larger centroid-Y) takes priority.
 
 ---
 
 ## 🧭 Open Challenge — Strategy & Logic
 
-The Open Challenge uses a separate script (`open_challenge.py`) with its own vision pipeline (`vision_pipeline_3.py`) and a simpler control stack — no speed PID, no obstacle avoidance states, no parking sequence. The same 4-process architecture runs: `CameraProcess`, `IMUandEncoder`, `TOFProcess`, and `DriveProcess`.
+`open_challenge.py` + `vision_pipeline_3.py`. No speed PID, no obstacle states, no parking. Servo centre 90°, motor power 85%.
 
 ### State Machine
 
 ```
-              [INIT]
-                │
-                ▼
-     ┌──────────────────────────────────────┐
-     │   Wait for any sensor input          │
-     │   (pink/red/green block, or wall)    │
-     │   → init = True, servo centred 65°   │
-     └──────────────┬───────────────────────┘
-                    │
-                    ▼
-     ┌──────────────────────────────────────────────┐
-     │  DIRECTION DETECTION (first trigger only)    │
-     │                                              │
-     │  (tf_h < 70mm AND tf_l > 100mm) OR blue_l   │
-     │      → blue_flag = True (CCW)                │
-     │      → trigger = True, counter_flag = False  │
-     │                                              │
-     │  (tf_h < 70mm AND tf_r > 100mm) OR orange_l  │
-     │      → orange_flag = True (CW)               │
-     │      → trigger = True, counter_flag = False  │
-     └──────────────┬───────────────────────────────┘
-                    │
-                    ▼
-     ┌──────────────────────────────────────────────────────┐
-     │  DRIVING LOOP  (counter < last_counter = 12)         │
-     │                                                      │
-     │  Steering priority (highest to lowest):              │
-     │   1. Both outer walls visible:                       │
-     │        err = centre offset from outer wall centroids  │
-     │        servo.setAngle(90 + servo_angle)              │
-     │   2. One outer wall visible:                         │
-     │        err = ±centroid offset from frame centre      │
-     │        servo.setAngle(90 + servo_angle)              │
-     │   3. Inner wall visible (counter > 0):               │
-     │        wall_left only  → correctAngle(hdg + 10, 1)   │
-     │        wall_right only → correctAngle(hdg - 10, 1)   │
-     │   4. Fallback:                                       │
-     │        correctAngle(heading_angle, head, 1)          │
-     │                                                      │
-     │  Motor: power = 85%, smoothed ramp                   │
-     │     total_power = power*0.01 + prev_power*0.99       │
-     └──────────────┬───────────────────────────────────────┘
-                    │
-        ┌───────────▼───────────────────────────┐
-        │  TURN TRIGGER (floor line detection)  │
-        │                                       │
-        │  orange_l AND orange_flag AND no trig │
-        │      → trigger = True                 │
-        │      → counter_flag = False           │
-        │                                       │
-        │  blue_l AND blue_flag AND no trig     │
-        │      → trigger = True                 │
-        │      → counter_flag = False           │
-        │                                       │
-        │  Trigger resets after 2s timeout      │
-        └───────────┬───────────────────────────┘
-                    │
-        ┌───────────▼───────────────────────────────────────┐
-        │  TURN EXECUTION (counter_flag=False AND trigger)  │
-        │                                                   │
-        │  Drive forward until close_wall > 0               │
-        │  (OR open-side TOF > 100mm → skip wall wait)      │
-        │  Then: counter++                                   │
-        │  heading_angle = update_heading(counter, ...)     │
-        │  counter_flag = True                              │
-        │  trigger reset after 2s                           │
-        └───────────┬───────────────────────────────────────┘
-                    │
-                    ▼ counter == 12 (3 laps × 4 turns)
-     ┌──────────────────────────────────────────────────────┐
-     │  STOP CONDITION (all must be true simultaneously):   │
-     │    • NOT trigger (no active turn in progress)        │
-     │    • time since last trigger > 3.5s                 │
-     │    • get_closest_setpoint(head) == heading_angle     │
-     │    • last_wall.value > 0 (stop line visible)         │
-     │  → runMotor(pwm, 0, 1) → sys.exit(0)                │
-     └──────────────────────────────────────────────────────┘
+INITIALIZE
+    │  Wait for any sensor input → init = True, servo to 65°
+    ▼
+DIRECTION DETECTION (first trigger only)
+    │  (tf_h < 70mm AND tf_l > 100mm) OR blue_l  → blue_flag = True (CCW)
+    │  (tf_h < 70mm AND tf_r > 100mm) OR orange_l → orange_flag = True (CW)
+    ▼
+DRIVING LOOP — counter < 12
+
+    Steering priority:
+    1. Both outer walls visible:
+         err = 320 − ((left_offset + right_offset) / 2)
+         servo.setAngle(90 + servo_angle)
+    2. Left wall only:  err = outer_wall_left / 2
+    3. Right wall only: err = −(640 − outer_wall_right) / 2
+    4. Inner wall (counter > 0):
+         left only  → correctAngle(heading + 10, 1)
+         right only → correctAngle(heading − 10, 1)
+    5. Fallback: correctAngle(heading_angle, head, 1)
+
+    Motor: 85% target, smoothed ramp (power×0.01 + prev×0.99)
+
+    TURN TRIGGER
+    │  orange_l AND orange_flag AND not trigger → trigger = True
+    │  blue_l AND blue_flag AND not trigger → trigger = True
+    │  Trigger resets after 2s timeout
+    ▼
+    TURN EXECUTION (counter_flag=False AND trigger)
+    │  Wait for corr < 5° or close_wall / open-side TOF breaks early
+    │  → counter++
+    │  → heading_angle = update_heading(counter, ...)
+    │  → counter_flag = True
+    ▼
+STOP — counter == 12
+    All 4 conditions simultaneously:
+    • NOT trigger
+    • time since last trigger > 3.5s
+    • get_closest_setpoint(head) == heading_angle
+    • last_wall.value > 0
+    → runMotor(0, 1) → sys.exit(0)
 ```
 
-### Steering — Outer Wall Centroid PD
+### Open Challenge Pseudocode
 
-Unlike the Obstacle Challenge (which steers toward pillar centroids), the Open Challenge drives purely by wall geometry. The outer walls are detected as black HSV blobs in `wall_left` and `wall_right` camera zones; their centroid-X positions are used to compute a lateral centering error:
-
-```python
-# Both outer walls visible — compute centre between them
-if outer_wall_left.value > 0 and outer_wall_right.value > 0:
-    left_offset  = 320 - outer_wall_left.value
-    right_offset = 320 + (640 - outer_wall_right.value)
-    centroid = (left_offset + right_offset) / 2
-    err = 320 - centroid
-
-# Left wall only
-elif outer_wall_left.value > 0:
-    err = outer_wall_left.value / 2          # push right
-
-# Right wall only
-elif outer_wall_right.value > 0:
-    err = -(640 - outer_wall_right.value) / 2  # push left
-
-# PD output
-servo_angle = err * kp_s + ((err - prev_err) / dt_main) * kd_s
-servo_angle = max(-25, min(25, servo_angle))
-servo.setAngle(90 + servo_angle)   # 90° is mechanical centre in open challenge
 ```
+INITIALIZE sensors, servo to 65°
+WHILE direction unknown:
+    DETECT orange_l or blue_l floor line
+    OR check side TOF for open corridor
+    SET direction = CW (orange) or CCW (blue)
 
-When no outer wall is visible, fallback is inner wall centroid bias (`correctAngle(heading ± 10)`) or pure heading PID (`correctAngle(heading_angle, head, 1)`).
+WHILE counter < 12:
+    READ outer wall centroids from camera
+    COMPUTE steering error from wall centroids
+    APPLY servo correction (PD on pixel error)
+    DETECT floor line colour trigger
+    IF trigger: counter++, update heading setpoint
 
-### Turn Detection — Floor Line Colour
-
-Turns are triggered by floor line colour detections (`orange_l`, `blue_l`) from the HSV pipeline (`zone = "line"`), not by TOF distance thresholds. On each trigger:
-- A `map_time` delay is computed from the side TOF distance (`map_range(tf_l/tf_r, 0, 100, 0, 0.7)`) to time the corner entry
-- The robot continues driving forward until `close_wall` (inner wall area) becomes non-zero, then commits the counter increment
-- If the open-side TOF reads > 100mm, it breaks the wall-wait early to avoid stalling mid-turn
-- Trigger resets automatically after a 2s timeout to prevent double-counting
-
-### Stop Condition
-
-The stop condition requires **four simultaneous conditions** to prevent premature halts:
-- `counter == 12` (all 12 turns completed)
-- No active trigger (`not trigger`)
-- At least 3.5 seconds since the last trigger fired
-- `get_closest_setpoint(head.value) == heading_angle` (IMU heading matches expected return angle)
-- `last_wall.value > 0` (the stop-line wall is visible in the camera)
-
-The `get_closest_setpoint` function snaps the current IMU heading to the nearest of `{0°, 90°, 180°, 270°}`, ensuring the robot is approximately back at the start orientation before stopping.
-
-### Key differences from Obstacle Challenge
-
-| Aspect | Open Challenge | Obstacle Challenge |
-|--------|---------------|-------------------|
-| Vision pipeline | `vision_pipeline_3.py` | `vision_pipeline_new.py` |
-| Servo centre | 90° | 95° |
-| Steering method | Outer wall centroid PD | Pillar centroid PD + heading PID |
-| Speed control | Smoothed ramp only (`0.01/0.99`) | Closed-loop speed PID (`correctSpeed`) |
-| Turn trigger | Floor line colour | Floor line colour |
-| Stop condition | 4-condition compound check | Encoder count target |
-| Parking | None | 4-state parking sequence |
-| `last_wall` value | centroid-X of stop-line blob | area of last-wall blob |
+CHECK stop conditions (all 4 must be true)
+STOP motor
+```
 
 ---
 
@@ -524,165 +606,156 @@ The `get_closest_setpoint` function snaps the current IMU heading to the nearest
 ### Full State Machine
 
 ```
-[STARTUP]
-    │
-    ├── Init CameraProcess (P)  — OpenCV HSV pipeline
-    ├── Init IMUandEncoder (E)  — XIAO UART reader (BNO085 + encoder)
-    ├── Init TOFProcess (T)     — VL53L0X ×4
-    └── Start DriveProcess (S)  — main decision loop
-         │
-         ▼
-[DIRECTION + PARKING SIDE DETECTION]
-    │  (outer_wall_left > 0 AND NOT outer_wall_right) OR (tf_l < tf_r)
-    │       → orange_flag = True (parking lot is on the right, CW)
-    │  (outer_wall_right > 0 AND NOT outer_wall_left) OR (tf_r < tf_l)
-    │       → blue_flag = True (parking lot is on the left, CCW)
-    ▼
-[STARTUP MANEUVER — inParkingatStart]
-    │  Robot steers ±60° away from wall then straightens
-    │  (orange: correctAngle(heading + 60), blue: correctAngle(heading - 60))
-    ▼
-[DRIVING LOOP — counter < last_counter (default 12 = 3 laps × 4 turns)]
-    │
-    ├── Pillar detected?
-    │       Green → err = 350 - centr_x (state 1) / 560 - centr_x (state 2)
-    │       Red   → err = 290 - centr_x_red (state 1) / 80 - centr_x_red (state 2)
-    │       None  → wall_left/right centroid → err = ±15 nudge
-    │       Pink + continue_parking → err toward centr_x_pink setpoint
-    │
-    ├── Centroid PD: servo_angle = err * kp_s + (err_diff / dt) * kd_s
-    │       obstacle_state 1→2 when centr_y > 100 (block close)
-    │       obstacle_state 2→1 when block clears or pink/close_wall nearby
-    │
-    ├── Turn trigger: orange_l (CW) or blue_l (CCW) floor line detected
-    │       → trigger = True, counter_flag = False
-    │       → counter++ when trigger fires
-    │       → heading_angle updated via update_heading(counter, ...)
-    │       → trigger resets after 2s timeout
-    │
-    └── No block + outer walls visible: correctAngle(heading ± 20) wall bias
+STARTUP
+    CameraProcess (P) — OpenCV HSV pipeline
+    IMUandEncoder (E) — XIAO UART: heading + encoder counts
+    DriveProcess (S)  — main loop, TFmini polled directly
 
-[LAP FINISH — counter == last_counter]
-    │
-    ├── Drive to closest heading setpoint, wait for close_wall to appear
-    ├── Reverse to align (correctReverseAngle), then resume forward
-    ├── Compute target encoder count from parking side + direction:
-    │       orange + parking_right: counts + 5800
-    │       orange + parking_left:  counts + 3700
-    │       blue   + parking_right: counts + 3700
-    │       blue   + parking_left:  counts + 5800
-    │       (finish_thresh: 1400 or 1900 depending on config)
-    ├── Drive forward until counts >= target_count
-    └── Stop → lap_finish = True
+DIRECTION + PARKING SIDE DETECTION
+    (tf_l < tf_r AND tf_l > 0) OR outer_wall_left only → orange_flag (CW, parking right)
+    (tf_r < tf_l AND tf_r > 0) OR outer_wall_right only → blue_flag (CCW, parking left)
 
-[PRE-PARKING — lap_finish, NOT continue_parking]
-    │  orange_flag: heading_angle += 90 (turn to face slot)
-    │  blue_flag:   heading_angle -= 95 (turn to face slot)
-    │  Reverse to align (correctReverseAngle), drive until park_wall > 4500 area
-    │  then forward until park_wall < 4500, stop → parking_STATE = 2
-    │  Adjust heading ±95°, reverse until corr < 5° → continue_parking = True
+STARTUP MANEUVER (inParkingatStart)
+    orange: correctAngle(heading + 60, multiplier=3)
+    blue:   correctAngle(heading − 70, multiplier=3)
+    Drive forward (ramp: duty×0.001 + prev×0.999) until corr < 2°
 
-[CONTINUE PARKING — continue_parking, NOT parking_flag]
-    │  Drive forward at power=50
-    │  If last_wall > 1350 AND heading aligned AND no pink → parking_flag = True
-    │  Steer toward pink centroid (centr_x_pink) if visible, else correctAngle
+DRIVING LOOP — counter < 12
 
-[MAIN PARKING — parking_flag]
-    │
-    ├── [STATE 1] Reverse 100 encoder counts straight
-    │
-    ├── [STATE 2] heading_angle ± 90° (into slot)
-    │       Reverse until corr < 10°, then reverse 1.5s more
-    │
-    ├── [STATE 3] Forward 0.55s: first 0.2s straight, then steer into slot
-    │       (parking_right → servo 70°, parking_left → servo 110°)
-    │
-    └── [STATE 4] heading_angle - 90° (straighten)
-            Reverse until corr < 3°
-            Drive forward until centr_y_pink > 235 (fully inside lot)
-            → Motor stop, servo center, sys.exit(0)
+    Block visible:
+        Green state1: err = 340 − centr_x
+        Green state2: err = 520 − centr_x  (blue+wall: 320/470)
+        Red state1:   err = 300 − centr_x_red
+        Red state2:   err = 120 − centr_x_red  (orange+wall: 320/170)
+        None + one inner wall: err = ±15 nudge
+        None + no block: correctAngle(heading ± 5°, 1.5)
+        Pink + continue_parking: err = 540−pink_x (right) / 125−pink_x (left)
+
+    Centroid PD: servo_angle = err×kp_s + (Δerr/dt)×kd_s, clamped ±30°
+    obstacle_state 1→2: centr_y > 100 (block close)
+    obstacle_state 2→1: after 0.08s, or pink/close_wall triggers early
+
+    Turn trigger: orange_l (CW) or blue_l (CCW)
+        → counter++, heading_angle updated
+        → trigger resets after 2s
+
+    Motor: 90% base, 75% when block visible
+
+LAP FINISH — counter == 12
+    Drive to heading setpoint (orange:270°, blue:−270°), time > 1.7s
+    Drive until close_wall > 0 (max 0.5s)
+    Reverse 3s with correctReverseAngle
+    Compute target encoder:
+        orange + parking_right: counts + 18200
+        orange + parking_left:  counts + 13800
+        blue   + parking_right: counts + 13800
+        blue   + parking_left:  counts + 18200
+    Drive forward until counts ≥ target → stop 2s → lap_finish = True
+
+PRE-PARKING
+    orange: heading += 90, blue: heading −= 90
+    Reverse until corr < 5°, reverse 1s, reverse while park_wall > 3100
+    Forward until park_wall > 3100
+    heading ± 95°, reverse until corr < 5° → continue_parking = True
+
+CONTINUE PARKING (parking approach)
+    Drive forward at 40%
+    Steer: pink visible → follow pink centroid
+           else → correctAngle(heading, 1)
+    Trigger: last_wall > 1570 AND |heading_err| < 15° AND not pink
+           → parking_flag = True
+
+MAIN PARKING
+    STATE 1: Reverse until not pink_b
+             If last_wall < 1500: forward (counts + 700)
+             → STATE 2
+
+    STATE 2: heading −= 90 (right) or += 90 (left)
+             Reverse until corr < 5°
+             Reverse until pink_b visible
+             → STATE 4
+
+    STATE 4: count_thresh = 400 (pink_x ≥ 320) or 600 (pink_x < 320)
+             heading_thresh = 60 or 80; PID_thresh = 1.5 or 3.0
+             Forward count_thresh counts with correctAngle(heading + heading_thresh)
+             Reverse until corr < 8°
+             Forward until centr_y_pink > 235  ← visual terminal condition
+             Motor stop, servo 95°, sys.exit(0)
 ```
 
-### Vision System — OpenCV HSV Pipeline
+### Parking Strategy — Why Multi-Stage?
 
-The `CameraProcess` runs `vision_pipeline_new.py` — a pure OpenCV HSV colour-segmentation pipeline with no ML accelerator required. It detects the following colour classes across named spatial zones:
+A simple forward drive into the slot fails because the robot always arrives at a slight angle from the final turn. Our 4-state sequence solves this:
 
-| Colour | Zone(s) | Role |
-|--------|---------|------|
-| Red | `main`, `close` | Red traffic sign pillar |
-| Green | `main`, `close` | Green traffic sign pillar |
-| Magenta | `main`, `close` | Parking lot boundary marker |
-| Orange | `line`, `line_2` | Floor line — CW lap direction |
-| Blue | `line`, `line_2` | Floor line — CCW lap direction |
-| Black | `wall_inner_left/right`, `wall_left/right`, `close_black`, `parking_wall`, `last_wall` | Inner/outer wall and parking zone boundaries |
+**PLACEHOLDER: Parking approach diagram** — *showing robot position at each state transition*
 
-**Why HSV over ML?**
-Last season we used a Google Coral Edge TPU with a quantized TFLite model. This season we moved to an HSV pipeline for simpler deployment (no TPU driver stack), faster iteration on colour thresholds, and elimination of the TPU as a failure point. To handle lighting variation we run the pipeline in both HSV and LAB colour spaces (`USE_LAB` flag) and tune thresholds per colour class.
+- **STATE 1** — Backs out until the pink boundary disappears (exits the approach angle), then optionally drives forward into position
+- **STATE 2** — Rotates 90° and reverses until the pink boundary is visible again (robot physically inside the slot)
+- **STATE 4** — Forward with heading bias, then straighten, then inch forward until `centr_y_pink > 235` — the pink border filling the camera frame is the terminal condition, independent of encoder count or time
 
-**Detection logic:**
-Each frame's detections are filtered by zone and sorted by centroid-Y (largest Y = closest to robot). If red and green pillars are both visible simultaneously, the one with the greater centroid-Y (closer) takes priority:
+**Why `centr_y_pink > 235`?** When the pink boundary fills the bottom of the camera frame, the robot is fully inside the lot by visual confirmation. This is more reliable than an encoder count, which can vary with wheel slip and battery voltage.
 
-```python
-# Both present — closest pillar wins
-if best_green["centroid"][1] > best_red["centroid"][1]:
-    # green is closer → steer left
-else:
-    # red is closer → steer right
+### Obstacle Challenge Pseudocode
+
 ```
+INITIALIZE sensors, detect direction from side distances
+EXECUTE startup maneuver (steer away from wall, straighten)
 
-**Camera settings fixed in code:**
-```python
-cap.set(cv2.CAP_PROP_EXPOSURE, -6)      # manual exposure, prevents auto-exposure flicker
-cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)     # always process latest frame
+WHILE counter < 12:
+    READ TFmini Plus: tfmini.getTFminiData()
+    READ camera: red_b, green_b, centr_x, centr_x_red
+    COMPUTE err from block centroid or wall nudge
+    APPLY centroid PD to servo
+    DETECT floor line trigger → counter++
+    IF counter == 12: execute lap-finish routine
+
+COMPUTE parking position from encoder counts
+STOP → lap_finish = True
+
+EXECUTE pre-parking maneuver (align heading to slot)
+DRIVE forward, follow pink or heading
+WAIT for parking_flag (last_wall + heading aligned)
+
+EXECUTE STATE 1 → STATE 2 → STATE 4 parking sequence
+CONFIRM by centr_y_pink > 235
+STOP
 ```
-Setting `BUFFERSIZE = 1` ensures we always process the most recent frame. Without this, OpenCV buffers up to 3–4 frames internally, meaning at 30fps the detection could be 133ms stale — enough for the robot to travel past a pillar without reacting.
-
-**Post-run video reconstruction:** During a run, frames and timestamps are written to disk. A separate `build_video.py` script reconstructs an annotated MP4 using ffmpeg's concat demuxer with per-frame durations — enabling post-run review without the overhead of `cv2.VideoWriter` in the live loop.
 
 ---
 
 ## 🔄 Engineering Decisions & Iterations
 
-This section documents the reasoning behind major architectural choices and the iterations that led to the current design. This is the essence of the engineering process — not just showing what we built, but why we built it this way.
+### Decision 1: Sensor Selection — TFmini Plus for Parking
 
-### Decision 1: VL53L0X ToF Array vs. RPLidar C1
+VL53L0X ToF sensors were our first choice for side distance sensing. At close range (<80mm) the 25° FOV caused false readings from floor reflections. We also hit I2C address contention — all VL53L0X sensors boot at `0x29`, requiring careful per-sensor XSHUT sequencing. Any mistake silently corrupted other sensors on the bus.
 
-**Last season's approach:** Turn detection used an RPLidar C1 spinning LiDAR, which provided 360° distance data. The turn condition was:
-```
-Front LiDAR < 950mm AND Open-side LiDAR > 1500mm AND timeout elapsed
-```
-This was reliable but added significant complexity: the LiDAR required a dedicated subprocess to parse the SLAMTEC SDK binary output, angle compensation for IMU heading offset, and EMA smoothing per angle bucket. The spinning motor also added vibration and a non-trivial power draw.
+The TFmini Plus solved both problems — 3.6° laser spot, UART interface (no shared bus), stable at close range. After testing, we found one sensor on the right side is sufficient. The parking lot is always on the outer wall, and the robot's approach always brings the right flank toward it. Front and rear distance sensing was removed entirely — camera black wall zones and floor line colour proved more robust than ToF thresholds at competition speeds.
 
-**This season's approach:** We replaced the RPLidar with a VL53L0X ToF array (×4: front, left, right, rear). Each sensor reads a single point distance over I2C, giving the same compound turn condition with far simpler code and no subprocess overhead. Per-sensor XSHUT lines (GPIO 23/24/25/27) allow boot-time address assignment and fault isolation at runtime.
+**Result:** Right side: TFmini Plus (`/dev/ttyAMA1`, read directly in DriveProcess). Front / rear / left: no sensors.
 
-**Tradeoff acknowledged:** VL53L0X has a 25° FOV vs. the LiDAR's full 360°. However, since we only need front/left/right/rear point distances for this state machine, the narrower FOV is not a practical limitation. Sensor recovery logic (bit-bang bus reset for SDA-held-low conditions, per-sensor XSHUT isolation, rate-limited retry) handles the I2C robustness cases that the serial LiDAR approach never needed.
+### Decision 2: Motor Driver Upgrade — MDD3A → Vikram-453R6
 
-### Decision 2: Multiprocessing vs. Single-threaded with async
+The MDD3A has no overcurrent protection — a wall collision at speed passes full current straight through. We lost two MDD3A drivers in one testing season. The Vikram-453R6 (DRV8871) adds hardware overcurrent detection, thermal shutdown, and auto-recovery. It's also pin-compatible with the MDD3A — no firmware changes needed.
 
-**The problem:** During early single-threaded development, sensor I/O and camera frame reads blocked the main loop for 10–15ms per cycle. At 95% PWM the robot travels ~15mm blind per blocked millisecond — enough to miss a narrow turn window or fail to react to a close pillar.
+### Decision 3: Multiprocessing vs. Single-Threaded
 
-**The fix:** Python's `multiprocessing` (not `threading`) was chosen deliberately. Python threads are limited by the Global Interpreter Lock (GIL), meaning CPU-bound tasks like OpenCV HSV detection and I2C polling don't actually run in parallel. `multiprocessing` spawns true OS processes, each with their own GIL, allowing `CameraProcess`, `TOFProcess`, and `IMUandEncoder` to run at full speed on separate CPU cores of the Pi 4's quad-core processor while `DriveProcess` reads only from shared memory with no blocking waits.
+Single-threaded development blocked the drive loop for 10–15ms per camera read at 5fps. At 90% PWM the robot travels ~15mm blind per blocked millisecond. `multiprocessing` was chosen over `threading` because the GIL prevents threads from running CPU-bound tasks in parallel. Four OS processes on four Pi 4 cores: camera, IMU/encoder, TOF, and drive.
 
-**Tradeoff acknowledged:** Shared memory requires explicit locking (`multiprocessing.Value` with `get_lock()`). We encountered one race condition early in development where `head.value` was written by `IMUandEncoder` simultaneously with a read in `DriveProcess`. Fixed by using atomic `with` blocks for all multi-variable reads where consistency across variables matters.
+### Decision 4: Centroid PD vs. Dead-Reckoning for Pillar Avoidance
 
-### Decision 3: Centroid PD vs. encoder dead-reckoning for pillar avoidance
+Last season we maintained an (x, y) position estimate via encoder dead-reckoning. Drift of ±30 units by lap 3 still caused avoidance misses. This season avoidance is driven directly by the pillar's pixel centroid — no positional state, no drift, and target setpoints can be tuned from video review in minutes rather than hours of encoder calibration.
 
-**Last season's approach:** We used an `EncoderCounter` dead-reckoning system to maintain an (x, y) position estimate within each straight section. A `setPoint` variable defined a target lateral offset, and a `correctPosition` PD controller minimized the error between estimated position and setpoint. When a pillar was detected, setPoint shifted toward ±35 (right/left bias); TFmini readings snapped the position back at each section start to limit drift.
+### Decision 5: Parking — Why Visual Terminal Condition?
 
-**Why we moved away:** Dead-reckoning position error accumulated across sections and required a reliable wall-reset trigger to stay useful. Adding the TOF reset logic introduced its own failure modes; in testing, position drift of ±30 units by lap 3 was still causing avoidance misses at high speed.
+Earlier parking versions used encoder counts and timeouts as terminal conditions. Both are unreliable — encoder counts vary with wheel slip, and timeouts don't confirm the robot is actually inside. The `centr_y_pink > 235` threshold is a direct visual confirmation from the camera: when the pink boundary fills the bottom of frame, the robot is fully inside. No encoder, no timer needed.
 
-**This season's approach:** Avoidance is driven directly by the pillar's pixel centroid in the camera frame. The `err` variable is computed as a pixel offset from a target centroid X position (e.g. `350 - centr_x` for green in state 1), and a simple PD on that pixel error (`kp_s`, `kd_s` from `gains.json`) outputs a servo angle correction. This runs at camera FPS with no positional state to accumulate drift, and target centroid setpoints can be tuned directly from video review.
+### Potential Future Improvements
 
-### Decision 4: Parking sequence — why multi-stage?
-
-The WRO 2026 parking rules require the robot to be fully inside the parking lot AND parallel to the outer wall. A simple forward drive into the slot fails because the robot approaches at a slight angle from the final turn. Our 4-state sequence:
-
-- **STATE 1:** Reverse 100 encoder counts straight (exit the approach angle)
-- **STATE 2:** Steer heading ±90° and reverse into the slot until `corr < 10°`, then reverse 1.5s more for depth
-- **STATE 3:** Short forward burst (0.55s): first 0.2s straight, then servo to `70°`/`110°` to press into the slot
-- **STATE 4:** Final heading correction (`heading - 90°`), reverse until straight (`corr < 3°`), then drive forward until `centr_y_pink > 235` (pink border fills the bottom of frame = robot fully inside)
-
-The pink centroid threshold in STATE 4 is the terminal condition — it's a direct visual confirmation that the robot is fully seated inside the lot, regardless of encoder count or time.
+- Motor with built-in encoder to simplify hardware
+- Auto `SPEED_SCALE` calibration from first run log
+- Rear camera or second TFmini for reverse safety
+- Custom carrier PCB to clean up wiring
+- Online PID gain scheduling based on lap time (encoder data already available)
 
 ---
 
@@ -690,12 +763,11 @@ The pink centroid threshold in STATE 4 is the terminal condition — it's a dire
 
 ### Open Challenge
 
-<!-- Replace with your actual YouTube link -->
 **PLACEHOLDER: Open Challenge Video**
 
 [![Open Challenge](https://img.youtube.com/vi/YOUR_VIDEO_ID/0.jpg)](https://youtu.be/YOUR_VIDEO_ID)
 
-*Autonomous navigation across randomized track layout — 3 complete laps, return to start.*
+*Autonomous navigation — 3 laps, return to start, full score.*
 
 ### Obstacle Challenge
 
@@ -703,258 +775,168 @@ The pink centroid threshold in STATE 4 is the terminal condition — it's a dire
 
 [![Obstacle Challenge](https://img.youtube.com/vi/YOUR_VIDEO_ID_2/0.jpg)](https://youtu.be/YOUR_VIDEO_ID_2)
 
-*Traffic sign detection and compliance, followed by parallel parking execution.*
+*Traffic sign detection, 3 laps, parallel parking — full score.*
+
+**Media:** Video editing done in [tool — fill in]. All performance documentation recorded and reviewed using the post-run `build_video.py` log reconstruction pipeline.
+
+---
+
+## 🌐 GitHub Utilization
+
+We use GitHub as our central platform for version control, documentation, and public transparency. Our workflow: develop locally, commit at meaningful milestones (completed state machine, fixed parking detection, validated motor driver swap), and update documentation alongside code so the repo always reflects the actual robot.
+
+**Key development milestones:**
+- First working chassis + wiring (Version 1)
+- HSV pipeline replacing Edge TPU (Version 2)
+- TFmini Plus integration + parking state machine
+- Multiprocessing architecture finalized
+- Speed PID implementation and calibration
+- Nationals-ready documentation pass
+
+**Commit philosophy:** Each commit represents a tested, working state of the robot. We don't commit broken intermediate states — every push to `main` is something the robot could actually run in competition.
+
+**Documentation standards:**
+- ✅ Every hardware change reflected in README on the same day
+- ✅ Every code change explained in comments, not just committed
+- ✅ Run logs included in `/logs/` for traceability
+- ✅ Wiring diagram updated whenever hardware changes
+- ✅ All placeholder values filled in before nationals submission
+
+---
+
+## 📜 License
+
+This project is open source. Other teams are encouraged to read, learn from, and build on our documentation and code. The modular architecture and detailed decision rationale are intentionally written to make replication straightforward.
+
+If you build on our work, please keep it open source and credit Team Glitch, WRO 2026.
 
 ---
 
 ## 🛠️ How to Build & Deploy
 
-This section is written so that anyone can replicate our robot from scratch — mechanical frame, electronics, firmware, and software — using only this repository and the component list above.
+### Step 1 — Chassis
 
----
-
-### Step 1 — 3D Print the Chassis
-
-All structural and CAD files are in the `models/` folder of this repository:
+Files in `models/`:
 
 ```
 models/
-├── 3D prints/                              # STL and project files — slice and print directly
-│   ├── all part 3d print file.3mf          # Complete multi-part print project (open in Bambu/PrusaSlicer)
-│   ├── project file.3mf                    # Alternate slicer project
-│   ├── new camera mount.STL               # Camera mount with 10° downward tilt
-│   ├── long stick.STL                     # Vertical sensor mast
-│   ├── long stick mount.STL               # Base mount for sensor mast
-│   ├── front cover.STL                    # Front bumper cover
-│   ├── battery 1.STL                      # Battery holder
-│   ├── an_6_12_holder.STL                 # 6mm/12mm rod holder
-│   ├── an_spacer internationale.STL       # Spacer for international chassis spec
-│   ├── spacer with tf mount.STL           # Spacer with sensor bracket
-│   ├── tf mini mount horizontal.STL       # Horizontal sensor bracket (legacy, for reference)
-│   ├── atfmini mounting.STL               # Alternate sensor mounting bracket
-│   ├── rp lidar mount.STL                 # RPLidar mount (legacy, for reference)
-│   └── an waveshare 5 inch dsi lcd.STL    # Display mount (optional)
-└── STEP/                                  # Editable CAD files (SolidWorks, Fusion 360, OnShape, FreeCAD)
-    ├── WRO FE Car complete CAD.STEP        # Full robot assembly — start here
-    ├── chassis_Polycarbonate_6mm thickness_qty1pc.STEP   # Chassis plate (cut from 6mm polycarbonate)
-    └── electronics Mount_3mm polycarbonate_ qty 1.STEP   # Electronics tray (cut from 3mm polycarbonate)
+├── 3D prints/
+│   ├── all part 3d print file.3mf       # Full print project
+│   ├── new camera mount.STL             # 10° downward tilt
+│   ├── long stick.STL                   # Sensor mast
+│   ├── long stick mount.STL             # Mast base
+│   ├── front cover.STL
+│   ├── battery 1.STL
+│   ├── spacer with tf mount.STL
+│   └── tf mini mount horizontal.STL    # TFmini Plus right-side bracket
+└── STEP/
+    ├── WRO FE Car complete CAD.STEP     # Full assembly reference
+    ├── chassis_Polycarbonate_6mm thickness_qty1pc.STEP
+    └── electronics Mount_3mm polycarbonate_ qty 1.STEP
 ```
 
-**Important notes on materials:**
-- The **chassis and electronics tray are not 3D printed** — they are laser-cut or CNC-cut from polycarbonate sheet. Use the STEP files to generate cut paths: `chassis_Polycarbonate_6mm thickness_qty1pc.STEP` (6mm sheet, 1 piece) and `electronics Mount_3mm polycarbonate_ qty 1.STEP` (3mm sheet, 1 piece).
-- All files in `3D prints/` are printed parts. The `.3mf` files (`all part 3d print file.3mf`) contain pre-arranged plates with all parts oriented and ready — open directly in PrusaSlicer or Bambu Studio.
+Chassis and tray are laser/CNC-cut, not printed. Print settings: PETG, 0.2mm layer, 40% gyroid, 4 perimeters. Supports for camera mount and mast base only.
 
-**Recommended print settings:**
+### Step 2 — Assembly
 
-| Parameter | Value |
-|-----------|-------|
-| Material | PETG or PLA+ (PETG preferred — better layer adhesion under vibration) |
-| Layer height | 0.2 mm |
-| Infill | 40% gyroid |
-| Perimeters / walls | 4 |
-| Supports | Required for `new camera mount.STL` and `long stick mount.STL` only |
-| Bed adhesion | Brim for any part with a narrow base |
+1. Cut chassis (6mm poly) and electronics tray (3mm poly).
+2. Mount Johnson 900RPM motor. Mount external encoder on output shaft, route cable to XIAO.
+3. Install DS3235 servo + Ackermann linkage. Inner wheel must turn sharper than outer at full lock.
+4. Mount sensor mast at front-centre.
+5. Mount TFmini Plus on right flank at 60mm height using `tf mini mount horizontal.STL`, perpendicular to travel.
+6. Mount camera (`new camera mount.STL`) — fixed 10° tilt, no adjustment.
+7. Mount electronics tray. Install Pi, XIAO, Vikram-453R6.
 
-Open `WRO FE Car complete CAD.STEP` in your CAD tool to see how every part fits together before printing or cutting anything.
+### Step 3 — Wiring
 
----
+See `schemes/wiring_diagram.png`. Critical rules:
+- BNO085 on XIAO 3V3 only — never Pi 3V3
+- TFmini Plus VCC = 5V buck; TX is 3.3V-compatible, direct to Pi UART RX
+- Vikram VM = 12V direct from LiPo — never through the 5V buck
+- Motor and encoder wires on opposite chassis sides
 
-### Step 2 — Mechanical Assembly
+### Step 4 — Flash XIAO
 
-Reference `WRO FE Car complete CAD.STEP` throughout — it shows every part in its final installed position.
+1. Arduino IDE ≥2.0, board URL: `https://files.seeedstudio.com/arduino/package_seeeduino_boards_index.json`
+2. Install: `Adafruit BNO08x`, `Adafruit Unified Sensor`
+3. Open `src/xiao/imu_encoder.ino`, select **XIAO ESP32C3**, upload.
 
-1. **Chassis:** Cut the chassis plate from 6mm polycarbonate sheet using `chassis_Polycarbonate_6mm thickness_qty1pc.STEP` as the cut profile. Cut the electronics tray from 3mm polycarbonate using `electronics Mount_3mm polycarbonate_ qty 1.STEP`.
-2. **Drive motor:** Mount the Rhino GB37 1000RPM motor into the rear motor bay using M3 bolts. Route the encoder cable forward along the chassis underside.
-3. **Steering servo:** Press the DS 35kg·cm servo into the front servo bay and connect to the Ackermann steering linkage.
-4. **Front axle:** Install the Ackermann steering linkage. Both front wheels should turn at slightly different angles at full lock — verify the inner wheel turns sharper than the outer wheel.
-5. **Sensor mast:** Print `long stick.STL` and `long stick mount.STL`. Mount the mast vertically at the front-centre of the chassis. VL53L0X sensors for left, right, and front mount on this mast via `spacer with tf mount.STL` brackets.
-6. **Camera mount:** Print `new camera mount.STL` and attach to the top of the sensor mast or front rail. The mount has a fixed 10° downward tilt — no adjustment needed.
-7. **Front cover:** Print `front cover.STL` and clip onto the front bumper rail to protect sensor wiring.
-8. **Battery holder:** Print `battery 1.STL` and secure the LiPo pack to the chassis deck.
-9. **Electronics tray:** Screw the cut 3mm polycarbonate tray to the chassis deck. Mount the Raspberry Pi, XIAO ESP32-C3, and MDD3A onto the tray using the pre-drilled mounting bosses visible in the STEP file.
+### Step 5 — Raspberry Pi Setup
 
----
-
-### Step 3 — Electronics Wiring
-
-Wire all components according to the wiring diagram in `schemes/wiring_diagram.png`. The key connections are:
-
-**Power rails:**
+Enable UART in `/boot/firmware/config.txt`:
 ```
-[12V LiPo]
-  ├── MDD3A VIN ────────────────────────────── Rhino GB37 motor
-  └── 5V Buck Converter
-        ├── Raspberry Pi 4 (USB-C, 5V/3A)
-        │     └── 3V3 rail ─── VL53L0X ×4 (XSHUT: GPIO23/24/25/27)
-        ├── Servo UBEC (dedicated, ≥5A rated)
-        │     └── DS 35kg·cm servo signal → GPIO8
-        └── XIAO ESP32-C3 (USB-C from Pi)
-              └── 3V3 rail ─── BNO085 IMU (I2C: SDA/SCL)
+dtoverlay=uart2
 ```
 
-**Signal connections:**
-
-| From | To | GPIO / Interface |
-|------|----|-----------------|
-| MDD3A M1A | Raspberry Pi | GPIO 16 (PIN_A) |
-| MDD3A M1B | Raspberry Pi | GPIO 20 (PIN_B) |
-| VL53L0X #1 XSHUT | Raspberry Pi | GPIO 23 (front) |
-| VL53L0X #2 XSHUT | Raspberry Pi | GPIO 24 (left) |
-| VL53L0X #3 XSHUT | Raspberry Pi | GPIO 25 (right) |
-| VL53L0X #4 XSHUT | Raspberry Pi | GPIO 27 (rear) |
-| All VL53L0X SDA/SCL | Raspberry Pi | I2C bus 1 (GPIO2/3) |
-| BNO085 SDA/SCL | XIAO ESP32-C3 | XIAO I2C (GPIO6/7) |
-| Encoder A/B | XIAO ESP32-C3 | XIAO GPIO (see firmware) |
-| XIAO USB-C | Raspberry Pi | USB port → `/dev/XIAO_USB` |
-| Servo signal | Raspberry Pi | GPIO 8 |
-| Kill switch | Raspberry Pi | GPIO 12 |
-| Blue LED | Raspberry Pi | GPIO 26 |
-| Red LED | Raspberry Pi | GPIO 13 |
-| Green LED | Raspberry Pi | GPIO 6 |
-| Reset pin | Raspberry Pi | GPIO 19 |
-
-**Critical wiring rules:**
-- The BNO085 **must** be powered from the XIAO's 3V3 rail, not the Pi's rail. Sharing the Pi rail introduces motor EMI into the IMU heading.
-- The VL53L0X sensors **must** be powered from the Pi's 3V3 rail, isolated from the XIAO rail.
-- Run the motor wires and encoder wires on opposite sides of the chassis — motor current induces EMI in nearby encoder signal lines.
-- Place a 100nF decoupling capacitor across each VL53L0X VCC/GND pin if you see I2C glitches during motor acceleration.
-
----
-
-### Step 4 — Flash the XIAO ESP32-C3 Firmware
-
-1. Install Arduino IDE (≥2.0) and add the Seeed Studio board package:
-   - In Arduino IDE: File → Preferences → Additional boards manager URLs
-   - Add: `https://files.seeedstudio.com/arduino/package_seeeduino_boards_index.json`
-   - Tools → Board → Boards Manager → search "Seeed XIAO ESP32C3" → Install
-
-2. Install required libraries via Library Manager:
-   - `Adafruit BNO08x`
-   - `Adafruit Unified Sensor`
-
-3. Open `src/xiao/imu_encoder.ino`, select board **XIAO ESP32C3**, select the correct COM/tty port, and upload.
-
-The firmware reads BNO085 Euler heading over I2C and quadrature encoder counts via GPIO, then broadcasts over USB UART at 115200 baud in the format:
-```
-<heading_float> <encoder_int>\n
-```
-Serial commands accepted at runtime:
-- `b"R"` — software reset (reboots XIAO and reinitialises BNO085)
-- `b"1"` — zero the encoder count
-
----
-
-### Step 5 — Set Up the Raspberry Pi
-
-**OS:** Raspberry Pi OS 64-bit Bookworm (Lite or Desktop). Enable I2C and the camera interface via `raspi-config`.
-
-**Install system dependencies:**
 ```bash
 sudo apt update && sudo apt install -y python3-pip pigpio python3-pigpio ffmpeg i2c-tools
+pip3 install opencv-python pyserial RPi.GPIO numpy
 ```
 
-**Install Python packages:**
-```bash
-pip3 install opencv-python pyserial RPi.GPIO adafruit-circuitpython-vl53l0x numpy
+Test TFmini Plus:
+```python
+import serial, time
+ser = serial.Serial("/dev/ttyAMA1", 115200, timeout=0.1)
+while True:
+    data = ser.read(9)
+    if len(data) == 9 and data[0] == 0x59 and data[1] == 0x59:
+        dist_cm = data[2] + data[3] * 256
+        print(f"Distance: {dist_cm} cm")
+    time.sleep(0.05)
 ```
 
-**Verify I2C bus and sensors:**
-```bash
-# Start pigpio daemon
-sudo pigpiod
-
-# Check I2C devices — should see 4 addresses after sensors boot
-i2cdetect -y 1
-```
-
-**Set up USB device alias** so `/dev/XIAO_USB` always resolves to the XIAO (plug the XIAO in first):
-```bash
-# Find vendor and product ID
-lsusb   # note idVendor and idProduct for the XIAO
-
-# Create udev rule
-sudo nano /etc/udev/rules.d/99-wro.rules
-```
-Add this line (replace XXXX/YYYY with your VID/PID from `lsusb`):
+XIAO udev alias (`/etc/udev/rules.d/99-wro.rules`):
 ```
 SUBSYSTEM=="tty", ATTRS{idVendor}=="XXXX", ATTRS{idProduct}=="YYYY", SYMLINK+="XIAO_USB"
 ```
-```bash
-sudo udevadm control --reload-rules && sudo udevadm trigger
-```
 
-**Clone the repository:**
-```bash
-cd /home/pi
-git clone https://github.com/YOUR_TEAM/WRO_2026.git
-cd WRO_2026/versionTest
-```
-
----
-
-### Step 6 — Configure PID Gains
-
-Edit `gains.json` before the first run. Start conservative and tune iteratively — the file hot-reloads while the script is running so you do not need to restart between adjustments:
+### Step 6 — Configure Gains
 
 ```json
 {
-  "kp": 0.6,
-  "kd": 0.01,
-  "ki": 0,
-  "kp_s": 0.5,
-  "kd_s": 0.5,
-  "kp_v": 0.01,
-  "ki_v": 0,
-  "kd_v": 0,
-  "SPEED_SCALE": 2447.0
+  "kp": 0.55, "kd": 0.0025, "ki": 0,
+  "kp_s": 0.05, "kd_s": 0.0000,
+  "kp_o": 1.5, "kd_o": 0.5,
+  "kp_v": 0.008, "ki_v": 0.0, "kd_v": 0.00,
+  "SPEED_SCALE": 7343.37
 }
 ```
 
-`kp`/`kd`/`ki` — heading PID (servo). `kp_s`/`kd_s` — centroid/wall PD (servo). `kp_v`/`ki_v`/`kd_v` — speed PID (motor duty, obstacle challenge only). `SPEED_SCALE` — encoder counts per second at 100% duty on a fresh battery; calibrate this from your first run logs before enabling `ki_v` or `kd_v`.
-
----
+Set `SPEED_SCALE` to 0 until you calibrate it from run logs. File hot-reloads every 0.5s — no restart needed.
 
 ### Step 7 — Run
 
 ```bash
-# Open Challenge
-cd /home/pi/WRO_2026/versionTest
-sudo python3 open_challenge.py
-
-# Obstacle Challenge
-sudo python3 obstacle_3.py
+sudo python3 obstacle_3.py    # Obstacle Challenge
+sudo python3 open_2.py # Open Challenge
 ```
 
-Both scripts start `pigpiod` automatically. Logs are written to `/home/pi/wro_logs/logs/` with timestamps. Flip the kill switch (GPIO 12) to start/stop the robot without restarting the script.
-
----
+Logs: `/home/pi/wro_logs/logs/`. Kill switch: GPIO6.
 
 ### Code Structure
 
 ```
 WRO_2026/
 ├── versionTest/
-│   ├── obstacle_3.py              # Obstacle challenge (4-process)
-│   ├── open_challenge.py          # Open challenge (4-process)
-│   ├── vision_pipeline_new.py     # HSV pipeline — obstacle challenge
-│   ├── vision_pipeline_3.py       # HSV pipeline — open challenge
-│   ├── vl53l0x.py                 # VL53L0XArray — XSHUT init + I2C recovery
-│   ├── Encoder.py                 # EncoderCounter dead-reckoning
+│   ├── obstacle_3.py              # Obstacle — 4-process
+│   ├── open_2.py          # Open — 4-process
+│   ├── vision_pipeline_new.py     # HSV pipeline — obstacle
+│   ├── vision_pipeline_3.py       # HSV pipeline — open
+│   ├── TFmini.py                  # TFmini Plus UART reader
+│   ├── Encoder.py                 # Dead-reckoning (open challenge)
 │   ├── Servo.py                   # Servo abstraction (pigpio)
-│   ├── build_video.py             # Post-run video reconstruction (ffmpeg)
+│   ├── build_video.py             # Post-run MP4 reconstruction
 │   └── gains.json                 # Hot-reloadable PID gains
-├── src/
-│   └── xiao/
-│       └── imu_encoder.ino        # XIAO ESP32-C3 firmware
+├── src/xiao/imu_encoder.ino       # XIAO firmware
 ├── models/
-│   ├── 3D prints/                 # STL files + .3mf slicer projects (print these)
-│   └── STEP/                      # Full assembly + polycarbonate cut files (CAD reference)
-├── logs/                          # Auto-generated run logs
-├── schemes/
-│   └── wiring_diagram.png         # Full wiring diagram
-└── v-photos/                      # Robot photos (6 angles + labeled)
+│   ├── 3D prints/
+│   └── STEP/
+├── schemes/wiring_diagram.png
+└── v-photos/
 ```
 
 ---
 
-*Documentation last updated: [DATE] — Team Glitch, WRO 2026 Future Engineers*
+**Team Glitch — WRO 2026 Future Engineers — India Nationals**
+
+*Documentation last updated: August 2026*
