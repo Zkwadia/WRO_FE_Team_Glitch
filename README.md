@@ -762,7 +762,7 @@ Earlier parking versions used encoder counts and timeouts as terminal conditions
 
 **PLACEHOLDER: Open Challenge Video**
 
-[Open Challenge](https://youtu.be/YOUR_VIDEO_ID)
+[Open Challenge](https://youtu.be/8WccRAMPBGA?si=UEdlYP7w4LqdHMFX)
 
 *Autonomous navigation — 3 laps, return to start, full score.*
 
