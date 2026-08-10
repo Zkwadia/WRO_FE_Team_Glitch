@@ -762,13 +762,13 @@ Earlier parking versions used encoder counts and timeouts as terminal conditions
 
 **PLACEHOLDER: Open Challenge Video**
 
-[![Open Challenge](https://img.youtube.com/vi/YOUR_VIDEO_ID/0.jpg)](https://youtu.be/YOUR_VIDEO_ID)
+[Open Challenge](https://youtu.be/YOUR_VIDEO_ID)
 
 *Autonomous navigation — 3 laps, return to start, full score.*
 
 ### Obstacle Challenge
 
-[![Obstacle Challenge](https://img.youtube.com/vi/YOUR_VIDEO_ID_2/0.jpg)](https://youtu.be/rnG7ssZLk40?si=vxQiCSiPdluKtJ0-)
+[Obstacle Challenge](https://youtu.be/rnG7ssZLk40?si=vxQiCSiPdluKtJ0-)
 
 *Traffic sign detection, 3 laps, parallel parking — full score.*
 ---
