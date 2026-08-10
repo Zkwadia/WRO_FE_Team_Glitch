@@ -48,7 +48,7 @@ Each folder in this repository contains detailed technical content:
 
 | Folder | Content | 
 |--------|---------|
-| `v-photos/` | Robot photos — 6 angles + labeled component view |
+| `v-photos/` | Robot photos — 6 angles + labelled component view |
 | `t-photos/` | Team photos — official and fun |
 | `schemes/` | Wiring diagram, power architecture |
 | `models/` | 3D print STL files, STEP CAD files for polycarbonate cuts |
@@ -156,10 +156,10 @@ WRO 2026 Future Engineers is a self-driving car challenge on a 3m × 3m racetrac
     <td><img src="v-photos/bottom.jpeg" width="250"></td>
   </tr>
   <tr>
-    <td colspan="2" align="center"><b>Labeled Component View</b></td>
+    <td colspan="2" align="center"><b>Labelled Component View</b></td>
   </tr>
   <tr>
-    <td colspan="2" align="center"><img src="v-photos/labeled.jpeg" width="500"></td>
+    <td colspan="2" align="center"><img src="v-photos/Labelled Component View.jpg" width="500"></td>
   </tr>
 </table>
 
