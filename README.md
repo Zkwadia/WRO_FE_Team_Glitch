@@ -684,8 +684,6 @@ MAIN PARKING
 
 A simple forward drive into the slot fails because the robot always arrives at a slight angle from the final turn. Our 4-state sequence solves this:
 
-**PLACEHOLDER: Parking approach diagram** — *showing robot position at each state transition*
-
 - **STATE 1** — Backs out until the pink boundary disappears (exits the approach angle), then optionally drives forward into position
 - **STATE 2** — Rotates 90° and reverses until the pink boundary is visible again (robot physically inside the slot)
 - **STATE 4** — Forward with heading bias, then straighten, then inch forward until `centr_y_pink > 235` — the pink border filling the camera frame is the terminal condition, independent of encoder count or time
@@ -759,8 +757,6 @@ Earlier parking versions used encoder counts and timeouts as terminal conditions
 ## 📹 Performance Videos
 
 ### Open Challenge
-
-**PLACEHOLDER: Open Challenge Video**
 
 [Open Challenge](https://youtu.be/8WccRAMPBGA?si=UEdlYP7w4LqdHMFX)
 
