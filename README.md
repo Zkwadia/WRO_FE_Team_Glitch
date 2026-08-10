@@ -17,8 +17,8 @@ Our name, **Glitch**, reflects our engineering philosophy — finding the unexpe
 > *"Every test run is a debugging session. Every crash is data."*
 
 **Current best times on the 3m × 3m field:**
-- **Open Challenge**: ~[60] seconds (full score)
-- **Obstacle Challenge**: ~[72] seconds (full score)
+- **Open Challenge**: ~50 seconds (full score)
+- **Obstacle Challenge**: ~72 seconds (full score)
 
 **PLACEHOLDER: Team banner image**
 
