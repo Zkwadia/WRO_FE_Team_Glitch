@@ -66,7 +66,7 @@ Each folder in this repository contains detailed technical content:
 |--------|------|------------|--------|
 | **Shaurya Sule** | Mechanical Design, Electronics, Strategy | 9th Grade | Shaurya is a talented student from the grade 9 of the Dhirubhai Ambani International school. He engages in many activities aside from academics, such as Robotics and Debate. He’s done WRO multiple times, having gone to the world championships and placing third once. He also does FTC, as Captain of his FTC team. He does debate as well, having won multiple championships across India.|
 | **Rehaan Dhandhia** | Software, Vision & Sensor Integration | 9th Grade |
-| **Zeus Wadia** | Electronics, Testing, Documentation | 9th Grade |
+| **Zeus Wadia** | Electronics, Testing, Documentation | 9th Grade | Zeus is a Grade 9 student at Nita Mukesh Ambani Junior School, Mumbai, with a strong passion for robotics, engineering, and technology. He has participated in competitive robotics programs including the World Robot Olympiad (WRO) and FIRST Tech Challenge (FTC), developing skills in mechanical design, electronics, programming, and problem solving. In 2025, he competed in the WRO Future Innovators Junior Category and achieved 12th place at the National Finals. He has also been an active FTC participant for the past two years. Through robotics, he has gained experience in robot design, assembly, electronics, programming, and autonomous systems, while continuously expanding his technical knowledge and engineering skills.|
 
 **Coach:** **Ajinkya Giri** — [Robotics Engineer and Mentor]
 
