@@ -74,7 +74,8 @@ Each folder in this repository contains detailed technical content:
 **Coach:** **Ajinkya Giri** — Robotics Engineer and Mentor
 
 **Fun Team Photo:**
-<img src="t-photos/team_fun.jpeg" width="500" align="center">
+
+<img src="t-photos/team_fun.jpeg" width="900" align="center">
 
 ### Team Journey
 
@@ -82,9 +83,7 @@ Throughout development — from first chassis cut to nationals — we logged eve
 
 **Testing session photo:** Tuning robot parking (setting up obstacle challenge).
 
-
-
-<img src="t-photos/Team_Testing.jpg" width="900" align="center">
+<img src="t-photos/Team_Testing.jpg" width="500" align="center">
 
 **PLACEHOLDER: Build session photo** — *Caption: [describe — e.g. first time the robot completed 3 laps]*
 
