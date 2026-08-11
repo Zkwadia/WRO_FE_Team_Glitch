@@ -61,7 +61,7 @@ Each folder in this repository contains detailed technical content:
 ## 👥 The Team
 
 **Official Team Photo**
-<img src="t-photos/team_official.jpg" width="900">
+<img src="t-photos/team_official.jpg" width="500">
 
 | Member | Role | Background | About |
 |--------|------|------------|--------|
