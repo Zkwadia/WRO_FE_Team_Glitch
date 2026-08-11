@@ -75,7 +75,7 @@ Each folder in this repository contains detailed technical content:
 **Coach:** **Ajinkya Giri** — Robotics Engineer and Mentor
 
 **Fun Team Photo:**
-
+This photo is from the 2025 WRO India nationals, where the 3 of us competed as a team in the Future Innovators category and eventually placed 12th.
 <img src="t-photos/team_fun.jpeg" width="900" align="center">
 
 ### Team Journey
