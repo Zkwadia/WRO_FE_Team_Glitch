@@ -74,7 +74,7 @@ Each folder in this repository contains detailed technical content:
 **Coach:** **Ajinkya Giri** — Robotics Engineer and Mentor
 
 **Fun Team Photo:**
-<img src="t-photos/team_fun.svg" width="500" align="center">
+<img src="t-photos/team_fun.jpeg" width="500" align="center">
 
 ### Team Journey
 
