@@ -64,8 +64,7 @@ Each folder in this repository contains detailed technical content:
 
 <img src="t-photos/team_official.jpg" width="500" align="left">
 
-
-
+.
 | Member | Role | Background | About |
 |--------|------|------------|--------|
 | **Shaurya Sule** | Documentation, Electronics, Strategy | 9th Grade | Shaurya is a Grade 9 student at Dhirubhai Ambani International School with a strong interest in robotics and debate. He has participated in WRO multiple times, including competing at the World Championships and achieving 3rd place. He is also the captain of his FTC team, where he develops leadership, engineering, and problem solving skills. Alongside robotics, he is an accomplished debater and has won multiple debate championships across India.|
