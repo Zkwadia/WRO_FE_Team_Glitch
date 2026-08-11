@@ -85,8 +85,6 @@ Throughout development — from first chassis cut to nationals — we logged eve
 
 <img src="t-photos/Team_Testing.jpg" width="500" align="center">
 
-**PLACEHOLDER: Build session photo** — *Caption: [describe — e.g. first time the robot completed 3 laps]*
-
 ---
 
 ## 🎯 Challenge Overview
