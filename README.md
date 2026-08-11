@@ -81,7 +81,8 @@ Each folder in this repository contains detailed technical content:
 
 Throughout development — from first chassis cut to nationals — we logged every run, debugged every crash, and iterated on every subsystem. The photos below capture key moments from that process.
 
-**PLACEHOLDER: Testing session photo** — *Caption: [describe what's happening — e.g. tuning parking at 11pm before nationals]*
+**Testing session photo** *Caption: [describe what's happening — e.g. tuning parking at 11pm before nationals]*
+<img src="t-photos/Team_Testing.jpg" width="500" align="left">
 
 **PLACEHOLDER: Build session photo** — *Caption: [describe — e.g. first time the robot completed 3 laps]*
 
