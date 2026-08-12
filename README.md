@@ -923,6 +923,12 @@ WRO_2026/
 ## GitHub Commit Dates
 This table shows the dates of the 3 main commits we have made to the GitHub, and how far they were from the National Competition.
 
+|Commit No.|Date|Time before nationals|
+|-|-|-|
+|1|June 18 2026|14 days|
+|2|July 20 2026|37 days|
+|3|Aug 12 2026|69 days|
+
 **Team Glitch — WRO 2026 Future Engineers — India Nationals**
 
 *Documentation last updated: August 2026*
