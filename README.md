@@ -37,6 +37,7 @@ Our name, **Glitch**, reflects our engineering philosophy — finding the unexpe
 - [📹 Performance Videos](#-performance-videos)
 - [🌐 GitHub Utilization](#-github-utilization)
 - [📜 License](#-license)
+- [🗓️ GitHub Commit Dates](#-github-commit-dates)
 
 ---
 
@@ -918,6 +919,9 @@ WRO_2026/
 ```
 
 ---
+
+## GitHub Commit Dates
+This table shows the dates of the 3 main commits we have made to the GitHub, and how far they were from the National Competition.
 
 **Team Glitch — WRO 2026 Future Engineers — India Nationals**
 
