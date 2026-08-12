@@ -37,7 +37,7 @@ Our name, **Glitch**, reflects our engineering philosophy — finding the unexpe
 - [📹 Performance Videos](#-performance-videos)
 - [🌐 GitHub Utilization](#-github-utilization)
 - [📜 License](#-license)
-- [🗓️ GitHub Commit Dates](#-github-commit-dates).
+- [🗓️ GitHub Commit Dates](#-github-commit-dates)
 
 ---
 
