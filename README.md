@@ -19,7 +19,7 @@ Our name, **Glitch**, reflects our engineering philosophy — finding the unexpe
 **Current best times on the 3m × 3m field:**
 - **Open Challenge**: ~50 seconds (full score)
 - **Obstacle Challenge**: ~72 seconds (full score)
-- 
+  
 ---
 
 ## 📚 Table of Contents
