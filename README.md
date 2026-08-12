@@ -309,7 +309,7 @@ A parallel steering linkage makes the inner wheel skid on tight turns because ea
 | Johnson 300 RPM | 300 | ~8 kg·cm | Too slow for sub-60s laps |
 | Johnson 600 RPM | 600 | 4.5 kg·cm | Prior season — adequate but limited top speed |
 | Rhino GB37 1000RPM | 1000 | 0.7 kg·cm | Tested — stalled at low PWM, insufficient torque |
-| **Johnson 900RPM Grade A ✓** | **900** | **High** | **Current — best torque/speed balance, external encoder added** |
+| **Johnson 900RPM Grade A ✓** | **900** | **3 kg.cm** | **Current — best torque/speed balance, external encoder added** |
 
 **Drive train calculation:**
 
@@ -333,12 +333,12 @@ Since while turning, both wheels follow a different turning radius, we decided t
 
 | Metric | Value |
 |--------|-------|
-| Chassis material | 6mm polycarbonate (laser/CNC cut) |
+| Chassis material | 6mm polycarbonate (CNC cut) |
 | Electronics tray | 3mm polycarbonate |
 | Motor mount hardware | M3 bolts |
-| Servo mount | Press-fit into servo bay |
+| Servo mount | Press-fit into servo bay with M3 bolts |
 | TFmini Plus mount | `tf mini mount horizontal.STL` at 60mm height |
-| Camera tilt | Fixed 10° downward (`new camera mount.STL`) |
+| Camera tilt | Fixed 32° downward (`new camera mount.STL`) |
 
 ### Iteration History
 
