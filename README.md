@@ -19,9 +19,7 @@ Our name, **Glitch**, reflects our engineering philosophy — finding the unexpe
 **Current best times on the 3m × 3m field:**
 - **Open Challenge**: ~50 seconds (full score)
 - **Obstacle Challenge**: ~72 seconds (full score)
-
-**PLACEHOLDER: Team banner image**
-
+- 
 ---
 
 ## 📚 Table of Contents
@@ -683,8 +681,6 @@ MAIN PARKING
 
 A simple forward drive into the slot fails because the robot always arrives at a slight angle from the final turn. Our 4-state sequence solves this:
 
-**PLACEHOLDER: Parking approach diagram** — *showing robot position at each state transition*
-
 - **STATE 1** — Backs out until the pink boundary disappears (exits the approach angle), then optionally drives forward into position
 - **STATE 2** — Rotates 90° and reverses until the pink boundary is visible again (robot physically inside the slot)
 - **STATE 4** — Forward with heading bias, then straighten, then inch forward until `centr_y_pink > 235` — the pink border filling the camera frame is the terminal condition, independent of encoder count or time
@@ -761,15 +757,9 @@ Earlier parking versions used encoder counts and timeouts as terminal conditions
 
 [![Open Challenge](https://img.youtube.com/vi/8WccRAMPBGA/0.jpg)](https://www.youtube.com/watch?v=8WccRAMPBGA)
 
-*Autonomous navigation — 3 laps, return to start, full score.*
-
 ### Obstacle Challenge
 
 [![Obstacle Challenge](https://img.youtube.com/vi/rnG7ssZLk40/0.jpg)](https://www.youtube.com/watch?v=rnG7ssZLk40)
-
-*Traffic sign detection, 3 laps, parallel parking — full score.*
-
-**Media:** Video editing done in [tool — fill in]. All performance documentation recorded and reviewed using the post-run `build_video.py` log reconstruction pipeline.
 
 ---
 
