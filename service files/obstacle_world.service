@@ -1,0 +1,49 @@
+[Unit]
+Description=Robot Python Service (camera + LIDAR + Arduino + Coral)
+After=local-fs.target systemd-udev-settle.service dev-video0.device
+Wants=systemd-udev-settle.service dev-video0.device
+# Obstacle and Open drive the same motor/servo/GPIO/camera - never together.
+Conflicts=open_challenge.service
+
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/WRO_2026/versionTest
+Environment=PYTHONUNBUFFERED=1
+Environment=WRO_SHOW_WINDOW=0
+# SupplementaryGroups removed — ensure pi is in needed groups via OS:
+# sudo usermod -aG video,dialout,plugdev,input pi
+# CONFIRM: run `groups pi` and check video/dialout/plugdev/input are all listed,
+# and that pi has logged in fresh (rebooted) since that command was run.
+
+# Zero the motor PWM before starting, in case a previous ungraceful crash
+# left pigpiod holding a stale duty cycle from before this run even began.
+#ExecStartPre=/usr/local/bin/wro-motor-safe-stop.sh
+
+# Real device-readiness wait, replacing the old flat 0.5s sleep - that sleep
+# was almost certainly the main cause of the intermittent camera failures,
+# since it doesn't actually check whether the camera is ready, just guesses.
+#ExecStartPre=/usr/local/bin/wro-wait-for-device.sh /dev/video0 /dev/XIAO_USB
+
+# Start Python script with virtual environment
+ExecStart=/home/pi/coral-py39-env/bin/python /home/pi/WRO_2026/versionTest/obstacle_3.py
+
+#ExecStopPost=/usr/local/bin/wro-motor-safe-stop.sh
+TimeoutStopSec=5
+
+# Restart on failure
+Restart=on-failure
+RestartSec=5
+
+LogRateLimitIntervalSec=0
+
+# Use systemd journal for logs
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+

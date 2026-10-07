@@ -3,9 +3,8 @@ import os
 from build_video import _build_video
 
 os.system("sudo pkill pigpiod")
-time.sleep(2)
 os.system("sudo pigpiod -x -1")  # -x -1 = allow every GPIO
-time.sleep(3)  # give the daemon time to come up
+time.sleep(5)  # give the daemon time to come up
 from datetime import datetime
 import numpy as np
 import cv2
@@ -79,8 +78,9 @@ def load_gains_if_changed():
 		print(f"[gains] reload skipped ({e}) — keeping current values")
 
 
-os.makedirs("/home/pi/WRO_2026/logs", exist_ok=True)
-log_file = open(f"/home/pi/wro_logs/logs/obstacle_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log", "w")
+os.makedirs("/home/pi/wro_logs/logs", exist_ok=True)
+
+RUNNING_AS_SERVICE = "INVOCATION_ID" in os.environ
 
 
 class Tee:
@@ -101,8 +101,14 @@ class Tee:
 			s.flush()
 
 
-sys.stdout = Tee(sys.stdout, log_file)
-sys.stderr = Tee(sys.stderr, log_file)
+if RUNNING_AS_SERVICE:
+	# journald already captures everything printed under systemd - skip the
+	# extra SD-card file writes/flushes entirely.
+	pass
+else:
+	log_file = open(f"/home/pi/wro_logs/logs/obstacle_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log", "w")
+	sys.stdout = Tee(sys.stdout, log_file)
+	sys.stderr = Tee(sys.stderr, log_file)
 # ─────────────────────────────────────────────────────────────────────────────
 # PINS
 # ─────────────────────────────────────────────────────────────────────────────
@@ -115,10 +121,10 @@ button_pin = 5
 switch_pin = 6
 exit_pin = 7
 servo_pin = 8
-blue_led = 26
+yellow_led = 19
 red_led = 13
-green_led = 6
-reset_pin = 19
+green_led = 26
+#reset_pin = 19
 
 # MDD3A Motor Driver pins
 PIN_A = 16  # MDD3A M1A
@@ -330,9 +336,10 @@ def correctAngle(setPoint_gyro, heading, multiplier):
 	dt = max(dt, 1e-3)  # avoid divide-by-zero
 	dt = min(dt, 0.2)  # clamp so one long stall doesn't spike the derivative
 	prev_loop_time = now
-	error_gyro = heading - setPoint_gyro
+	'''error_gyro = heading - setPoint_gyro
 	if error_gyro > 180:
-		error_gyro -= 360
+		error_gyro -= 360'''
+	error_gyro = (heading - setPoint_gyro + 180) % 360 - 180
 	corr = error_gyro
 
 	pTerm = kp * error_gyro * multiplier
@@ -358,9 +365,10 @@ def correctReverseAngle(setPoint_gyro, heading, multiplier):
 	dt = max(dt, 1e-3)  # avoid divide-by-zero
 	dt = min(dt, 0.2)  # clamp so one long stall doesn't spike the derivative
 	prev_loop_time = now
-	error_gyro = heading - setPoint_gyro
+	'''error_gyro = heading - setPoint_gyro
 	if error_gyro > 180:
-		error_gyro -= 360
+		error_gyro -= 360'''
+	error_gyro = (heading - setPoint_gyro + 180) % 360 - 180
 	corr = error_gyro
 
 	pTerm = kp * error_gyro * multiplier
@@ -414,7 +422,7 @@ def correctSpeed(target_power_pct, counts_value, direction):
 	if direction != prev_direction_speed:
 		resetSpeedPID(counts_value)
 		prev_direction_speed = direction
-		return target_power_pct   # first call after flip — start at baseline, not 0
+		return target_power_pct  # first call after flip — start at baseline, not 0
 
 	now = time.time()
 	dt = now - prev_loop_time_speed
@@ -437,7 +445,7 @@ def correctSpeed(target_power_pct, counts_value, direction):
 	prev_error_speed = error
 
 	correction = kp_v * error + ki_v * total_error_speed + kd_v * derivative
-	duty = target_power_pct + correction   # baseline + correction, computed fresh
+	duty = target_power_pct + correction  # baseline + correction, computed fresh
 	duty = max(0.0, min(100.0, duty))
 
 	return duty
@@ -470,7 +478,11 @@ def runMotor(pwm, speed, direction):
 		pwm.set_PWM_dutycycle(PIN_B, 0)
 
 
-def TOFProcess(tof_front, tof_left, tof_right, tof_rear):
+def TOFProcess(tof_front, tof_left, tof_right, tof_rear, camera_ready):
+	# Let the camera claim the USB bus / power rail first, uncontested.
+	# Falls through after 15s even if the camera never signals ready, so a
+	# camera failure doesn't also take down the TOF sensor.
+	camera_ready.wait(timeout=15)
 	"""
 	Dedicated process for reading VL53L0X sensors.
 	Writes latest values into shared memory at full speed.
@@ -512,12 +524,14 @@ def _serialize_detections(detections):
 	return out
 
 
-def CameraProcess(red_b, green_b, pink_b, centr_y, centr_x, centr_y_red, centr_x_red, centr_x_pink, centr_y_pink, orange_l, blue_l, wall_left, wall_right, left_a, right_a, time_video, close_wall, red_area, green_area, outer_wall_left, outer_wall_right, centr_x_close, centr_y_close, head, fps_m, switch_state, park_wall, last_wall, last_wall_2):  # ← VL53L0X shared values (replaces tfmini)
-	# time.sleep(1)
+def CameraProcess(red_b, green_b, pink_b, centr_y, centr_x, centr_y_red, centr_x_red, centr_x_pink, centr_y_pink, orange_l, blue_l, wall_left, wall_right, left_a, right_a, time_video, close_wall, red_area, green_area, outer_wall_left, outer_wall_right, centr_x_close, centr_y_close, head, fps_m, switch_state, park_wall, last_wall, last_wall_2, camera_ready):  # ← VL53L0X shared values (replaces tfmini)
+	# time.sleep(2)
 
 	print("Camera Process (HSV) started")
 
-	SHOW_WINDOW = True
+	# Off by default (headless boot / systemd service has no display).
+	# Run with WRO_SHOW_WINDOW=1 manually (e.g. over VNC/SSH -X) to see the debug window.
+	SHOW_WINDOW = os.environ.get("WRO_SHOW_WINDOW", "0") == "1"
 	os.environ.setdefault("QT_QPA_PLATFORM", "xcb")
 	os.environ.setdefault("DISPLAY", ":0")
 
@@ -534,25 +548,60 @@ def CameraProcess(red_b, green_b, pink_b, centr_y, centr_x, centr_y_red, centr_x
 	frame_idx = 0
 	date_str = datetime.now().strftime("%d-%m-%y_%H-%M-%S")
 	if cap is None:
-		return
+		print("[camera] failed to open camera - exiting CameraProcess", flush=True)
+		camera_ready.set()
+		os._exit(1)          # was: return
+
+	# Camera is open and confirmed streaming - safe for the other processes
+	# (motor/servo PWM, serial IMU reads) to start now without competing
+	# with camera enumeration for USB bus / power rail / CPU scheduling.
+	camera_ready.set()
 
 	if SHOW_WINDOW:
-		pass
-		WIN = "WRO 2026 — OpenCV Detection  |  Q quit"
-		cv2.namedWindow(WIN, cv2.WINDOW_NORMAL)
-		cv2.resizeWindow(WIN, FRAME_WIDTH, FRAME_HEIGHT)
+		try:
+			WIN = "WRO 2026 — OpenCV Detection  |  Q quit"
+			cv2.namedWindow(WIN, cv2.WINDOW_NORMAL)
+			cv2.resizeWindow(WIN, FRAME_WIDTH, FRAME_HEIGHT)
+		except cv2.error as e:
+			print(f"[camera] no display available, continuing headless: {e}")
+			SHOW_WINDOW = False
 
 	frame_count = 0
 
+	consecutive_failures = 0
+	MAX_CONSECUTIVE_FAILURES = 30
+
 	try:
 		while True:
-			# time.sleep(0.01)
 			ret, frame = cap.read()
+
 			if not ret or frame is None:
+				consecutive_failures += 1
+				if consecutive_failures % 10 == 1:
+					print(f"[camera] frame read failed ({consecutive_failures} in a row)")
+				if consecutive_failures >= MAX_CONSECUTIVE_FAILURES:
+					print("[camera] too many failed reads - reopening camera")
+					cap.release()
+					time.sleep(1)
+					cap = pipeline.open_camera()
+					if cap is None:
+						print("[camera] reopen failed, retrying in 2s")
+						time.sleep(2)
+						continue
+					consecutive_failures = 0
+				else:
+					time.sleep(0.05)
 				continue
+
+			consecutive_failures = 0
+			# if SHOW_WINDOW:
 			frame = cv2.resize(frame, (FRAME_WIDTH, FRAME_HEIGHT))
 
-			detections = pipeline.detect(frame)
+			try:
+				detections = pipeline.detect(frame)
+			except Exception as e:
+				print(f"[camera] detect() failed on this frame, skipping: {e}")
+				continue
 
 			# ── Filter by zone ────────────────────────────────────────────────
 			magenta_list = [d for d in detections["magenta"] if d["zone"] == "main"]
@@ -596,10 +645,14 @@ def CameraProcess(red_b, green_b, pink_b, centr_y, centr_x, centr_y_red, centr_x
 			green_present_close = bool(green_blocks_close)
 			pink_present_close = bool(magenta_list_close)
 
-			# ── Debug print ───────────────────────────────────────────────────
-			for color in ["red", "green", "magenta", "black", "orange", "blue"]:
-				for d in detections[color]:
-					cx, cy = d["centroid"]
+			# ── Debug print (terminal, works with SHOW_WINDOW False) ──────────
+			if frame_count % 10 == 0:
+				summary = []
+				for color in ["red", "green", "magenta", "black", "orange", "blue"]:
+					for d in detections[color]:
+						cx, cy = d["centroid"]
+						summary.append(f"{color}@({cx},{cy}) zone={d['zone']} area={d['area']:.0f}")
+				print(f"[detections] {' | '.join(summary) if summary else 'none'}")
 
 			# ── Reset all shared flags every frame ────────────────────────────
 			red_b.value = False
@@ -696,7 +749,7 @@ def CameraProcess(red_b, green_b, pink_b, centr_y, centr_x, centr_y_red, centr_x
 			wall_left.value = 0.0
 			wall_right.value = 0.0
 			outer_wall_left.value = 0.0
-			outer_wall_right.value = 0.0			
+			outer_wall_right.value = 0.0
 			close_wall.value = 0.0
 			park_wall.value = 0.0
 			last_wall.value = 0.0
@@ -763,13 +816,13 @@ def CameraProcess(red_b, green_b, pink_b, centr_y, centr_x, centr_y_red, centr_x
 			if SHOW_WINDOW:  # only annotate every other frame to save CPU
 				# annotated = pipeline.annotate(frame, detections, USE_LAB, fps, time_video.value, head.value)
 				# cv2.imshow(WIN, annotated)
-				pass
-			key = cv2.waitKey(1) & 0xFF
-			if key == ord("q"):
-				break
-			elif key == ord("s"):
-				# cv2.imwrite(f"/home/pi/wro_logs/images/image_{date_str}.png", annotated)
-				print("Snapshot saved!")
+
+				key = cv2.waitKey(1) & 0xFF
+				if key == ord("q"):
+					break
+				elif key == ord("s"):
+					# cv2.imwrite(f"/home/pi/wro_logs/images/image_{date_str}.png", annotated)
+					print("Snapshot saved!")
 			"""if switch_state.value == 1 and not recording:
 				date_str = datetime.now().strftime("%d-%m-%y_%H-%M-%S")
 				frames_dir = f"/home/pi/wro_logs/videos/frames_{date_str}"
@@ -804,6 +857,11 @@ def CameraProcess(red_b, green_b, pink_b, centr_y, centr_x, centr_y_red, centr_x
 		# print(f"Recording stopped — {frame_idx} frames. Building video...")
 		# _build_video(date_str, frames_dir)
 		pass
+	except Exception as e:
+		tb = traceback.extract_tb(e.__traceback__)
+		filename, lineno, func, text = tb[-1]
+		print(f"[camera] CRASHED: {e}")
+		print(f"[camera] at {filename}, line {lineno}, in {func}")
 	finally:
 		"""if recording and ts_log is not None:
 		ts_log.close()
@@ -817,9 +875,13 @@ def CameraProcess(red_b, green_b, pink_b, centr_y, centr_x, centr_y_red, centr_x
 # ─────────────────────────────────────────────────────────────────────────────
 
 
-def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, centr_x_red, centr_x_pink, centr_y_pink, head, orange_l, blue_l, wall_left, wall_right, left_a, right_a, time_video, close_wall, red_area, green_area, outer_wall_left, outer_wall_right, centr_x_close, centr_y_close, tof_front, tof_left, tof_right, tof_rear, fps_m, switch_state, park_wall, last_wall, last_wall_2):  # ← VL53L0X shared values (replaces tfmini)
+def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, centr_x_red, centr_x_pink, centr_y_pink, head, orange_l, blue_l, wall_left, wall_right, left_a, right_a, time_video, close_wall, red_area, green_area, outer_wall_left, outer_wall_right, centr_x_close, centr_y_close, tof_front, tof_left, tof_right, tof_rear, fps_m, switch_state, park_wall, last_wall, last_wall_2, camera_ready):  # ← VL53L0X shared values (replaces tfmini)
 	global kp_s, kd_s  # add this near your other `global` lines at the top
-	time.sleep(3)
+	# Let the camera claim the USB bus / power rail first, uncontested -
+	# replaces the old flat 3s sleep with an actual readiness signal.
+	# Falls through after 15s even if the camera never signals ready, so a
+	# camera failure doesn't also take down the drive process.
+	camera_ready.wait(timeout=15)
 	pwm = pigpio.pi()
 	global servo
 	servo = Servo(servo_pin)
@@ -828,12 +890,12 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 		print("Could not connect to pigpio daemon")
 		exit(1)
 
-	for pin in [blue_led, red_led, green_led]:
+	for pin in [yellow_led, red_led, green_led]:
 		pwm.set_mode(pin, pigpio.OUTPUT)
 		pwm.write(pin, 0)
 	pwm.set_mode(switch_pin, pigpio.INPUT)
 	pwm.set_pull_up_down(switch_pin, pigpio.PUD_DOWN)
-	pwm.set_mode(reset_pin, pigpio.OUTPUT)
+	#pwm.set_mode(reset_pin, pigpio.OUTPUT)
 
 	tfmini = TFmini(17, 27, 25, 24)
 	"""print(f"resetting.....")
@@ -866,7 +928,7 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 	exit_flag = False
 	power = 90
 	prev_power = 0
-	last_counter = 12
+	last_counter = 12	
 	counter = turn_t = current_time = gp_time = rp_time = buff = c_time = 0
 	heading_angle = 0
 	lap_finish_time = prev_distance = turn_trigger_distance = target_count = offset = 0
@@ -906,7 +968,7 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 	servo_angle = 0
 	g_time = time.time()
 	r_time = time.time()
-
+	p_time = time.time()
 	trig_time = time.time()
 	block_time = time.time()
 
@@ -917,6 +979,7 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 	orange_vanished = False
 	blue_vanished = False
 	before_stop_routine = False
+	fallback_trigger = False
 	map_time = 0
 	video_t = 0
 	closest_heading = 0
@@ -929,6 +992,8 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 	while pwm.read(switch_pin) == 1:
 		print("make sure the toggle is off")
 	toggle = False
+	init_seq = False
+	trig_flag = False
 	try:
 		while True and not toggle:
 			tfmini.getTFminiData()
@@ -947,11 +1012,14 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 			# x, y = enc.get_position(head.value, counts.value)
 
 			if not init:
-				if pink_b.value or red_b.value or green_b.value:
+				if (pink_b.value or red_b.value or green_b.value) and (head.value > 0):
 					correctAngle(heading_angle, head.value, 1.5)
 					init = True
+				else:
+					pass
+					#servo.setAngle(30)
 			# print(f"heading: {head.value} closest sp:{get_closest_setpoint(head.value)}")
-
+			
 			#########################################################################
 
 			#######################################################################
@@ -962,11 +1030,13 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 					orange_flag = True
 					blue_flag = False
 					inParkingatStart = True
+					init_seq = True
 				elif ((tf_r < tf_l and tf_r > 0) or (outer_wall_right.value > 0 and not outer_wall_left.value > 0)) and head.value > 0:
 					print("Left side parking")
 					orange_flag = False
 					blue_flag = True
 					inParkingatStart = True
+					init_seq = True
 			# orange_flag = True
 
 			# print(f"parkingatStart: {inParkingatStart} orange:{orange_flag} blue:{blue_flag}")
@@ -992,10 +1062,32 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 					exit_last_time = time.time()
 					print(f"🔘 Exit button toggled!")
 					power = 95"""
-			if pwm.read(switch_pin) == 1:
+			if red_b.value:
+				pwm.write(red_led, 1)
+			else:
+				pwm.write(red_led, 0)
+			if green_b.value:
+				pwm.write(green_led, 1)
+			else:
+				pwm.write(green_led, 0)
+			if orange_l.value or blue_l.value or pink_b.value:
+				pwm.write(yellow_led, 1)
+			else:
+				pwm.write(yellow_led, 0)
+			if init_seq:
+				servo.setAngle(50)
+				time.sleep(1)
+				servo.setAngle(140)
+				time.sleep(1)
+				init_seq = False
+
+			if pwm.read(switch_pin) == 1 and not init_seq:
 				button = True
-				power = 90
-			elif pwm.read(switch_pin) == 0:
+				if counter == 0:
+					power = 80 #90
+				else:
+					power = 90
+			elif pwm.read(switch_pin) == 0 and not init_seq:
 				button = False
 				power = 0
 			switch_state.value = button
@@ -1003,25 +1095,28 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 			if not button:
 				# print(f"last_wall: {last_wall.value} last_wall_2: {last_wall_2.value} imu :{head.value}")
 				# print(f"imu:{head.value:.2f} r: {red_b.value} g:{green_b.value} p:{pink_b.value} fps:{fps_m.value:.2f} park_wall:{park_wall.value}")
-				print(f" rgb: [{red_b.value}]left: {tfmini.distance_head} orange_flag:{orange_flag} start:{inParkingatStart} imu:{head.value:.2f}")
+				print(f" rgb: [{red_b.value} {green_b.value} {pink_b.value}] walls:[{outer_wall_left.value}  {outer_wall_right.value}]orange_flag:{orange_flag} start:{inParkingatStart} imu:{head.value:.2f}")
 				pass
 
-			if button:
+			if button and not init_seq:
 				print(f"[CALIB] t={time.time():.4f} counts={counts.value}")
 				print("-------------------------------------------------")
 				print("Switch is ON")
+				print(f"IMU Value: {head.value}")
 
 				if red_b.value or green_b.value:
-					power = 75
+					power = 77
 					# block_time = time.time()
 				elif not red_b.value and not green_b.value:
-					power = 90
+					power = 90 #85
+				#if counter == 0:
+					#power = power - 10
 					# block_time = 0
 				# x, y = enc.get_position(imu_head, counts.value)
 				# inParkingatStart = False
 				if inParkingatStart:
 					prev_time = time.time()
-					'''while time.time() - prev_time < 0.3:
+					"""while time.time() - prev_time < 0.3:
 						if orange_flag:
 							servo.setAngle(115)
 						elif blue_flag:
@@ -1074,26 +1169,43 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 						prev_power = total_power
 					resetSpeedPID(counts.value)
 
-					print(f"correction: {abs(corr)} duty:{duty:.2f} 2")'''
+					print(f"correction: {abs(corr)} duty:{duty:.2f} 2")"""
 					if orange_flag:
-						correctAngle(heading_angle + 60, head.value, 3)
+						if parking_right:
+							correctAngle(heading_angle + 60, head.value, 3)
+						elif parking_left:
+							correctAngle(heading_angle + 70, head.value, 3)
+
 					elif blue_flag:
-						correctAngle(heading_angle - 70, head.value, 3)
+						if parking_right:
+							correctAngle(heading_angle - 70, head.value, 3)
+						elif parking_left:
+							correctAngle(heading_angle - 60 , head.value, 3)
 
 					while abs(corr) > 2 and not is_switch_off_and_stop(pwm):
 						duty = correctSpeed(50, counts.value, 1)
-						total_power = duty*0.001 + prev_power *0.999
+						total_power = duty * 0.001 + prev_power * 0.999
 						runMotor(pwm, total_power, 1)
 						prev_power = total_power
 						if orange_flag:
-							correctAngle(heading_angle + 60, head.value, 3)
+							if parking_right:
+								correctAngle(heading_angle + 60, head.value, 3)
+							elif parking_left:
+								correctAngle(heading_angle + 70, head.value, 3)
+
 						elif blue_flag:
-							correctAngle(heading_angle - 70, head.value, 3)
+							if parking_right:
+								correctAngle(heading_angle - 70, head.value, 3)
+							elif parking_left:
+								correctAngle(heading_angle - 60 , head.value, 3)
 
 						print(f"correction: {abs(corr)} duty:{duty:.2f} 3")
 						# runMotor(pwm, 70, 1)
 					runMotor(pwm, 0, 1)
-
+					if not trig_flag:
+						print(f"trig timer started")
+						trig_time = time.time()
+						trig_flag = True
 					inParkingatStart = False
 
 				else:
@@ -1111,45 +1223,46 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 
 						if STATE == 1:
 							if blue_flag or orange_flag:
-								'''while last_wall.value > 1550:
-									correctReverseAngle(heading_angle, head.value, 1.5)
-									driveAtSpeed(pwm, 35, 0, counts.value)
+								"""while last_wall.value > 1550:
+										correctReverseAngle(heading_angle, head.value, 1.5)
+										driveAtSpeed(pwm, 35, 0, counts.value)
 								resetSpeedPID(counts.value)
 								while last_wall.value < 1580:
-									correctAngle(heading_angle, head.value, 1.5)
-									driveAtSpeed(pwm, 30, 1, counts.value)
-								resetSpeedPID(counts.value)'''
-
-								while not pink_b.value:
+										correctAngle(heading_angle, head.value, 1.5)
+										driveAtSpeed(pwm, 30, 1, counts.value)
+								resetSpeedPID(counts.value)"""
+								driveAtSpeed(pwm, 0, 0, counts.value)
+								time.sleep(0.2)
+								while not pink_b.value :
 									correctReverseAngle(heading_angle, head.value, 1.5)
 									driveAtSpeed(pwm, 35, 0, counts.value)
 								resetSpeedPID(counts.value)
 								last_counter
-								if last_wall.value < 1500:
-									target_count = counts.value + 700
+								if last_wall.value < 1250:
+									target_count = counts.value + 950
 								else:
-									target_count = 0
+									target_count = counts.value + 20
 								while counts.value < target_count:
 									correctAngle(heading_angle, head.value, 1.5)
-									driveAtSpeed(pwm, 30, 1, counts.value)									
-								#target_count = counts.value - 20
-								'''target_count = counts.value + 100
+									driveAtSpeed(pwm, 30, 1, counts.value)
+								# target_count = counts.value - 20
+								"""target_count = counts.value + 100
 #								while last_wall.value > 1500:
 								while counts.value < target_count:
 
 									correctAngle(heading_angle, head.value, 1.5)
 									driveAtSpeed(pwm, 30, 1, counts.value)
 
-								resetSpeedPID(counts.value)'''
-								
-								'''target_count = counts.value - 150
+								resetSpeedPID(counts.value)"""
+
+								"""target_count = counts.value - 150
 #								while last_wall.value > 1500:
 								while counts.value > target_count:
 
 									correctReverseAngle(heading_angle, head.value, 1.5)
 									driveAtSpeed(pwm, 30, 0, counts.value)
 
-								resetSpeedPID(counts.value)'''
+								resetSpeedPID(counts.value)"""
 
 								STATE = 2
 
@@ -1179,7 +1292,7 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 								prev_time = time.time()
 								while not pink_b.value:
 									driveAtSpeed(pwm, 30, 0, counts.value)
-									correctReverseAngle(heading_angle, head.value, 3)							
+									correctReverseAngle(heading_angle, head.value, 3)
 
 								print(f"last wall:{last_wall.value} last wall 2:{last_wall_2.value}")
 							final_park = time.time()
@@ -1194,28 +1307,27 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 								prev_pow = 0
 								prev_pow = 0
 								prev_time = time.time()
-								while(time.time() - prev_time < 0.65):
+								while time.time() - prev_time < 0.65:
 									driveAtSpeed(pwm, 35, 1, counts.value)
-									#servo.setAngle(80)
+									# servo.setAngle(80)
 									if parking_right:
-										#servo.setAngle(85)
+										# servo.setAngle(85)
 										servo.setAngle(105)
 									elif parking_left:
-										#servo.setAngle(105)
+										# servo.setAngle(105)
 										servo.setAngle(85)
-									'''if time.time() - prev_time > 0.15:
+									"""if time.time() - prev_time > 0.15:
 										if parking_right:
 											servo.setAngle(85)
 										elif parking_left:
 											servo.setAngle(105)
 									else:
-										servo.setAngle(95)'''
+										servo.setAngle(95)"""
 								driveAtSpeed(pwm, 0, 1, counts.value)
 
 								correctReverseAngle(heading_angle - 90, head.value, 3)
 								final_park = time.time()
 								prev_time = time.time()
-
 
 								final_park = time.time()
 								prev_time = time.time()
@@ -1226,37 +1338,62 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 							STATE = 4
 
 						if STATE == 4:
-							count_thresh = 400
-							heading_thresh = 60
-							PID_thresh = 1.5
+							count_thresh = 550  # 600
+							heading_thresh = 70
+							PID_thresh = 2
+							rev_time = 0.25  # 0.25
+							reverse_taken = False
 							if centr_x_pink.value < 320:
-								count_thresh = 600
+								count_thresh = 900
 								heading_thresh = 80
 								PID_thresh = 3
-							target_count = counts.value + count_thresh
-#								while last_wall.value > 1500:
-							while counts.value < target_count:
+								rev_time = 0.35
 
-								correctAngle(heading_angle + heading_thresh, head.value, PID_thresh)
+							prev_time = time.time()
+
+							reverse_taken = True
+							while time.time() - prev_time < rev_time and reverse_taken:
+								correctReverseAngle(heading_angle, head.value, PID_thresh)
+								driveAtSpeed(pwm, 30, 0, counts.value)
+							reverse_taken = False
+
+							target_count = counts.value + count_thresh
+							# 								while last_wall.value > 1500:.
+							while counts.value < target_count:
+								if parking_right:
+									correctAngle(heading_angle + heading_thresh, head.value, PID_thresh)
+								elif parking_left:
+									correctAngle(heading_angle - heading_thresh, head.value, PID_thresh)
+
 								driveAtSpeed(pwm, 30, 1, counts.value)
 
-							resetSpeedPID(counts.value)							
-							correctReverseAngle(heading_angle + 90, head.value, 3)
+							resetSpeedPID(counts.value)
+							if parking_right:
+								correctReverseAngle(heading_angle + 90, head.value, 3)
+							elif parking_left:
+								correctReverseAngle(heading_angle - 90, head.value, 3)
+
 							prev_time = time.time()
-							while abs(corr) > 8 and not is_switch_off_and_stop(pwm):
+							while abs(corr) > 10 and not is_switch_off_and_stop(pwm):
 								tf_h = tof_front.value
 								print(f"ASASSAD")
 								print(f"corr:{abs(corr)} head:{tf_h}")
 								driveAtSpeed(pwm, 30, 0, counts.value)
-								#correctReverseAngle(heading_angle - 90, head.value, 3) ###############################################################################################################
-								correctReverseAngle(heading_angle + 90, head.value, 3)
+								# correctReverseAngle(heading_angle - 90, head.value, 3) ###############################################################################################################
+								if parking_right:
+									correctReverseAngle(heading_angle + 90, head.value, 3)
+								elif parking_left:
+									correctReverseAngle(heading_angle - 90, head.value, 3)
 							stuck = False
-							resetSpeedPID(counts.value)								
+							resetSpeedPID(counts.value)
 
-							while centr_y_pink.value < 235:
+							while centr_y_pink.value < 230:
 								print(f"MAKIBNG FINAL ADJUSTMENT")
-								#correctAngle(heading_angle - 90, head.value, 3) ###############################################################################################################
-								correctAngle(heading_angle + 90, head.value, 3)
+								# correctAngle(heading_angle - 90, head.value, 3) ###############################################################################################################
+								if parking_right:
+									correctAngle(heading_angle + 90, head.value, 3)
+								elif parking_left:
+									correctAngle(heading_angle - 90, head.value, 3)
 								driveAtSpeed(pwm, 30, 1, counts.value)
 
 							power = 0
@@ -1273,8 +1410,21 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 						if not counter_flag and trigger:
 							if time.time() - prev_time > 0:
 								counter += 1
+								trig_time = time.time()
 								counter_flag = True
 								heading_angle = update_heading(counter, heading_angle, blue_flag, orange_flag)
+								print(f"Turning... Counter++")
+								if fallback_trigger:
+									prev_time = time.time()
+									correctReverseAngle(heading_angle, head.value, 1)
+									while time.time() - prev_time < 2:
+										print("Correcting fallback")
+										driveAtSpeed(pwm, 50, 0, counts.value)
+										correctReverseAngle(heading_angle, head.value, 1)
+									fallback_trigger = False
+									prev_time = time.time()
+									trig_time = time.time()
+
 
 						##################################### HANDLE OBSTACLE AVOIDANCE ###########################
 
@@ -1291,12 +1441,12 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 								print(f"center greeen...")
 								if blue_flag:
 									if wall_left.value > 0 or outer_wall_left.value > 0:
-										err = 320 - centroid
+										err = 280 - centroid
 									else:
 										err = 340 - centroid
-									
-								else:									
-									err = 340 - centroid
+
+								else:
+									err = 320 - centroid
 							elif obstacle_state == 2:
 								print(f"left greeen...")
 								if blue_flag:
@@ -1304,13 +1454,13 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 										err = 470 - centroid
 									else:
 										err = 520 - centroid
-									
-								else:									
-									err = 520 - centroid
-								#err = 520 - centroid
 
-							'''pwm.write(red_led, 0)
-							pwm.write(green_led, 1)'''
+								else:
+									err = 520 - centroid
+								# err = 520 - centroid
+
+							"""pwm.write(red_led, 0)
+							pwm.write(green_led, 1)"""
 						elif red_b.value and (not green_b.value and time.time() - g_time > 0.01) and not lap_finish:
 							r_time = time.time()
 							g_time = 0
@@ -1320,24 +1470,24 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 								print(f"center red...")
 								if orange_flag:
 									if wall_right.value > 0 or outer_wall_right.value > 0:
-										err = 320 - centroid
+										err = 340 - centroid
 									else:
 										err = 300 - centroid
-								else:									
-									err = 290 - centroid
+								else:
+									err = 250 - centroid
 							elif obstacle_state == 2:
 								print(f"right red...")
 								if orange_flag:
 									if wall_right.value > 0 or outer_wall_right.value > 0:
-										err = 170 - centroid
+										err = 140 - centroid #140
 									else:
-										err = 120 - centroid
-								else:									
+										err = 110 - centroid #120
+								else:
 									err = 100 - centroid
-								#err = 120 - centroid
+								# err = 120 - centroid
 
-							'''pwm.write(red_led, 1)
-							pwm.write(green_led, 0)'''
+							"""pwm.write(red_led, 1)
+							pwm.write(green_led, 0)"""
 						elif not red_b.value and not green_b.value and not lap_finish:
 							if not outer_wall_left.value > 0 and not outer_wall_right.value > 0:
 								if wall_left.value > 0 and not wall_right.value > 0:
@@ -1348,9 +1498,9 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 									err = 15
 							centroid = 0
 							centroid_pink = 0
-							'''pwm.write(red_led, 0)
+							"""pwm.write(red_led, 0)
 							pwm.write(green_led, 0)
-							pwm.write(blue_led, 0)'''
+							pwm.write(yellow_led, 0)"""
 
 						# print(f"red_b.value: {red_b.value} green_b.value:{green_b.value}")
 						# print(f"both diff: {abs(r_time - g_time)}  r_time diff: {time.time() - r_time:.2f} g_time: {time.time() - g_time:.2f} ")
@@ -1358,10 +1508,10 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 							p_time = time.time()
 							centroid_pink = centr_x_pink.value
 							if parking_right:
-								err = 540 - centroid_pink
+								err = 520 - centroid_pink
 							elif parking_left:
-								err = 125 - centroid_pink
-							#pwm.write(blue_led, 1)
+								err = 120 - centroid_pink
+							# pwm.write(yellow_led, 1)
 						##################################################### PID CENTROID ############################################
 
 						servo_angle = err * kp_s + (((err - prev_err) / dt_main) * kd_s)
@@ -1380,12 +1530,12 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 						##########################################################################################################################
 						if not lap_finish:
 
-							if close_wall.value > 0 and counter == 0 and blue_flag:
+							if (close_wall.value > 0 and counter == 0 and blue_flag and parking_right):
 								correctAngle(heading_angle, head.value, 1.5)
-
+								print("in 1.8 if")
 								while abs(corr) > 25 and not is_switch_off_and_stop(pwm):
 									print("printing this")
-									duty = correctSpeed(power, counts.value, 1)
+									duty = correctSpeed(60, counts.value, 1)
 									runMotor(pwm, duty, 1)
 									if counter != last_counter:
 										if orange_l.value and orange_flag and not trigger:
@@ -1393,7 +1543,7 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 											map_time = map_range(tf_l, 0, 100, 0, 0.7)
 											trigger = True
 											counter_flag = False
-										elif blue_l.value and blue_flag and not trigger:
+										elif (blue_l.value and blue_flag and not trigger):
 											map_time = map_range(tf_r, 0, 100, 0, 0.7)
 											prev_time = time.time()
 											trigger = True
@@ -1402,19 +1552,47 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 											trigger = False
 									correctAngle(heading_angle, head.value, 1.5)
 									prev_time = time.time()
+									trig_time = time.time()
 									trigger = True
 									counter_flag = False
 
-							else:
-								pass
-								# power = 90
+							elif (close_wall.value > 0 and counter == 0 and orange_flag and parking_left):
+								correctAngle(heading_angle, head.value, 1.5)
+								print("in 1.8 if")
+								while abs(corr) > 25 and not is_switch_off_and_stop(pwm):
+									print("printing this")
+									duty = correctSpeed(60, counts.value, 1)
+									runMotor(pwm, duty, 1)
+									if counter != last_counter:
+										if orange_l.value and orange_flag and not trigger:
+											prev_time = time.time()
+											map_time = map_range(tf_l, 0, 100, 0, 0.7)
+											trigger = True
+											counter_flag = False
+										elif (blue_l.value and blue_flag and not trigger):
+											map_time = map_range(tf_r, 0, 100, 0, 0.7)
+											prev_time = time.time()
+											trigger = True
+											counter_flag = False
+										elif time.time() - prev_time > 2 and trigger:
+											trigger = False
+									correctAngle(heading_angle, head.value, 1.5)
+									prev_time = time.time()
+									trig_time = time.time()
+									trigger = True
+									counter_flag = False
 
 							if obstacle_state == 1:
 								if ((green_b.value) or (red_b.value)) and not (centr_x_close.value > 0) and ((centr_y.value < 100 and centr_y.value > 0) or (centr_y_red.value < 100 and centr_y_red.value > 0)):
 									# print("Avo iding obstacle")
 									print("Avoiding obstacle")
 									# block_time = time.time()
-									servo.setAngle(95 - servo_angle)
+									if ((((centr_x.value > 60) or (centr_x_red.value > 60)) and blue_flag) or (((centr_x.value < 580) or (centr_x_red.value < 580)) and orange_flag)) or not before_stop_routine:
+										print(f"obstacle is beyond limit state 1")
+										servo.setAngle(95 - servo_angle)
+									else:
+										print(f"not beyond 1")
+										correctAngle(heading_angle, head.value, 0.5)
 								elif centr_x_close.value > 0 or (centr_y.value > 100 or centr_y_red.value > 100):
 									block_time = time.time()
 									print(f"shifting to state 2..")
@@ -1427,14 +1605,13 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 										print(f"no green or red detected, correcting heading...")
 										if (outer_wall_left.value > 0) and not outer_wall_right.value > 0 and not close_wall.value > 0:
 											print(f"correcting outer left wall...")
-											correctAngle(heading_angle + 5, head.value, 1.5)
+											correctAngle(heading_angle + 5, head.value, 1)
 										elif outer_wall_right.value > 0 and not outer_wall_left.value > 0 and not close_wall.value > 0:
 											print(f"correcting outer right wall...")
-											correctAngle(heading_angle - 5, head.value, 1.5)
+											correctAngle(heading_angle - 5, head.value, 1)
 										else:
 											print(f"state 1 correcting no/both walls")
 											correctAngle(heading_angle, head.value, 1.5)
-									
 
 							elif obstacle_state == 2:
 								# power = 90
@@ -1443,13 +1620,19 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 
 								if time.time() - block_time < 0.08:
 									print(f"avoding obstacle_state == 2")
-									if centr_y_pink.value > 100 or close_wall.value > 50 :
+									if centr_y_pink.value > 100 or close_wall.value > 50 or (((centr_y.value < 100 and centr_y.value > 0) or (centr_y_red.value < 100 and centr_y_red.value > 0))):
 										print(f"either pink is near or close wall is near shifting back to state 1")
 										obstacle_state = 1
 
 									else:
 										print(f"still avoding block for {0.05} sec")
-										servo.setAngle(95 - servo_angle)
+										if ((((centr_x.value > 60) or (centr_x_red.value > 60)) and blue_flag) or (((centr_x.value < 580) or (centr_x_red.value < 580)) and orange_flag)) or not before_stop_routine:
+											print(f"obstacle is beyonf limit state 2")
+											servo.setAngle(95 - servo_angle)
+										else:
+											obstacle_state = 1
+
+										# servo.setAngle(95 - servo_angle)
 
 								else:
 									print(f"shifting back to 1")
@@ -1458,15 +1641,23 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 							##################################### HANDLE TURNS ########################################
 
 							if counter != last_counter:
-								if orange_l.value and orange_flag and not trigger:
+								if ((time.time() - trig_time > 5 and counter > 0) or orange_l.value) and orange_flag and not trigger:
 									prev_time = time.time()
 									map_time = map_range(tf_l, 0, 100, 0, 0.7)
-									trigger = True
+									if time.time() - trig_time > 5 and not fallback_trigger:
+										fallback_trigger = True
+										trigger = True
+									else:
+										trigger = True
 									counter_flag = False
-								elif blue_l.value and blue_flag and not trigger:
+								elif ((time.time() - trig_time > 5 and counter > 0) or blue_l.value) and blue_flag and not trigger:#blue_l.value and blue_flag and not trigger:
 									map_time = map_range(tf_r, 0, 100, 0, 0.7)
 									prev_time = time.time()
-									trigger = True
+									if time.time() - trig_time > 5 and not fallback_trigger:
+										fallback_trigger = True
+										trigger = True
+									else:
+										trigger = True
 									counter_flag = False
 								elif time.time() - prev_time > 2 and trigger:
 									trigger = False
@@ -1478,16 +1669,16 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 								if not before_stop_routine:
 									prev_heading = 0
 									if orange_flag:
-										prev_heading = 270
+										prev_heading = 270 #260
 									elif blue_flag:
-										prev_heading = -270
-									correctAngle(prev_heading, head.value, 1)
+										prev_heading = -260
+									correctAngle(prev_heading, head.value, 1.5)
 									prev_time = time.time()
-									while (abs(corr) > 25 or time.time() - prev_time < 1.7) and not is_switch_off_and_stop(pwm):
+									while (abs(corr) > 25 or time.time() - prev_time < 1.45) and not is_switch_off_and_stop(pwm):
 										print(f"find closest sp {prev_heading} {abs(corr):.2f} {heading_angle} {head.value:.2f} {time_video.value:.2f}")
 										driveAtSpeed(pwm, 50, 1, counts.value)
 
-										correctAngle(prev_heading, head.value, 1)
+										correctAngle(prev_heading, head.value, 1.5)
 
 									prev_time = time.time()
 									while (not close_wall.value > 0) and not is_switch_off_and_stop(pwm):
@@ -1500,11 +1691,11 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 									prev_time = time.time()
 									correctReverseAngle(heading_angle, head.value, 3)
 									# prev_power  = 0
-									while time.time() - prev_time < 3:#abs(corr) > 5 and not is_switch_off_and_stop(pwm):
+									while time.time() - prev_time < 3:  # abs(corr) > 5 and not is_switch_off_and_stop(pwm):
 										print(f"reversing corr {heading_angle} {abs(corr):.2f} {heading_angle} {head.value:.2f} {time_video.value:.2f} {(time.time() - prev_time):.2f}")
 										driveAtSpeed(pwm, 50, 0, counts.value)
-										'''if time.time() - prev_time > 3:
-											break'''
+										"""if time.time() - prev_time > 3:
+											break"""
 										correctReverseAngle(heading_angle, head.value, 3)
 									before_stop_routine = True
 									power = 70
@@ -1516,20 +1707,20 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 										if parking_right:
 											finish_thresh = 1400
 											before_finish = 0
-											target_count = counts.value + 18200
+											target_count = counts.value + 17500
 										elif parking_left:
 											before_finish = 0
 											finish_thresh = 1900
-											target_count = counts.value + 13800
+											target_count = counts.value + 13000
 									elif blue_flag:
 										if parking_right:
 											finish_thresh = 1900
 											before_finish = 0
-											target_count = counts.value + 13800
+											target_count = counts.value + 13000
 										elif parking_left:
 											finish_thresh = 1400
 											before_finish = 0
-											target_count = counts.value + 18200
+											target_count = counts.value + 17500
 									finished = True
 
 								if (counts.value >= target_count) or (counts.value >= target_count - before_finish):
@@ -1537,7 +1728,7 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 									prev_power = 0
 									pink_b.value = False
 									runMotor(pwm, power, 1)
-									time.sleep(2)
+									time.sleep(1)
 									pink_b.value = False
 									prev_power = 0
 									lap_finish = True
@@ -1550,7 +1741,7 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 							if orange_flag:
 								print("Correcting wall pid orange")
 								if parking_STATE == 1:
-									
+
 									heading_angle += 90
 									correctReverseAngle(heading_angle, head.value, 3)
 									while abs(corr) > 5 and not is_switch_off_and_stop(pwm):
@@ -1575,6 +1766,7 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 										correctReverseAngle(heading_angle, head.value, 1)
 										print(f"p state 1 {park_wall.value}")
 									prev_power = 0
+
 									while (park_wall.value > 3100) and not is_switch_off_and_stop(pwm):
 										# x, y = enc.get_position(head.value, counts.value)
 										duty = correctSpeed(40, counts.value, 0)
@@ -1584,7 +1776,6 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 										correctReverseAngle(heading_angle, head.value, 1)
 										print(f"p state 1 {park_wall.value}")
 									runMotor(pwm, 0, 0)
-
 									prev_power = 0
 									while (park_wall.value < 3100) and not is_switch_off_and_stop(pwm):
 										# x, y = enc.get_position(head.value, counts.value)
@@ -1706,22 +1897,23 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 						if continue_parking and not parking_flag:
 							# correctAngle(heading_angle, head.value, 1)
 							power = 40
-
-
-							if last_wall.value > 1570 and (abs(heading_angle - head.value) < 15 or abs(heading_angle - head.value) > 345) and not pink_b.value:
+							if (time.time() - p_time > 0.4) and last_wall.value > 1500 and (abs(heading_angle - head.value) < 15 or abs(heading_angle - head.value) > 345) and not pink_b.value:  # and last_wall.value>1570
 								runMotor(pwm, 0, 1)
 								time.sleep(0.5)
+
 								print(f"parking_flag is true")
 								parking_flag = True
 								resetSpeedPID(counts.value)
 
-							if not pink_b.value or (centr_y_pink.value > 150 and centr_x_pink.value > 530):
+							if not pink_b.value or (centr_y_pink.value > 150 and centr_x_pink.value > 520 and parking_right) or (centr_y_pink.value > 150 and centr_x_pink.value < 120 and parking_left):
 								print(f"correcting angle pink is not seen {abs(heading_angle - head.value):.2f}")
-								correctAngle(heading_angle, head.value, 1)
+								correctAngle(heading_angle, head.value, 1.5)
+
+
 
 							else:
 								servo_angle = servo_angle + servo_angle * 3
-								servo_angle = max(-25, min(25, servo_angle))
+								servo_angle = max(-30, min(30, servo_angle))
 								print(f"Followuing pink wall... {servo_angle:.2f} corr:{abs(heading_angle - head.value):.2f}")
 								servo.setAngle(95 - servo_angle)
 
@@ -1736,9 +1928,8 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 				print(f"close x: {centr_x_close.value} close y: {centr_y_close.value} close wall: {close_wall.value} park_wall: {park_wall.value}")
 				print(f"centroid val: {centroid} servo_angle = {servo_angle:.2f} err = {err}")
 				print(f"pink: {pink_b.value} green:{green_b.value} red:{red_b.value} ")
-				print(f"tigger :{trigger} counter_flag: {counter_flag} block_time :{time.time() - block_time:.2f} ")
-				
-
+				print(f"counter: {counter}  tigger :{trigger} fall_bacl_trigger:{fallback_trigger} heading angle {heading_angle} block_time :{time.time() - block_time:.2f} ")
+				print(f"orange_l: {orange_l.value} blue_l:{blue_l.value} trig: {time.time() - trig_time}")
 				# print(f"OBSTACLE_STATE:{OBSTACLE_STATE} RESET_STATE:{RESET_STATE}")
 				print("---------------------------------------------------")
 
@@ -1790,12 +1981,16 @@ def DriveProcess(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, 
 	print("ESP32 reset complete")"""
 
 
-def IMUandEncoder(counts, head):
+def IMUandEncoder(counts, head, camera_ready):
+	# Let the camera claim the USB bus first - the ESP32 link is also USB,
+	# and opening it while the camera is mid-enumeration is exactly the kind
+	# of contention that was causing intermittent camera init failures.
+	camera_ready.wait(timeout=15)
 	ser = serial.Serial("/dev/XIAO_USB", 115200, timeout=0.1)
 
 	print("Sending software reset to ESP32...")
 	ser.write(b"R")
-	time.sleep(1)  # wait for ESP32 to fully reboot and BNO085 to init
+	time.sleep(2)  # cold boot needs more margin than a warm manual run
 	ser.reset_input_buffer()  # flush boot garbage
 	print("ESP32 reset complete")
 
@@ -1804,6 +1999,27 @@ def IMUandEncoder(counts, head):
 	print("Command sent: b'1'")
 
 	ser.reset_input_buffer()  # flush boot garbage
+
+	# Don't trust the link until we've actually seen several good lines.
+	good_lines = 0
+	deadline = time.time() + 10
+	while good_lines < 5 and time.time() < deadline:
+		line = ser.readline().decode("utf-8", errors="ignore").strip()
+		parts = line.split()
+		if len(parts) >= 2:
+			try:
+				float(parts[0])
+				int(parts[1])
+				good_lines += 1
+			except ValueError:
+				good_lines = 0
+	if good_lines >= 5:
+		print("[IMU] link validated")
+	else:
+		print("[IMU] WARNING: could not validate link in time, proceeding anyway")
+
+	last_update = time.time()
+	last_heartbeat = time.time()
 	try:
 		while True:
 			line = ser.readline().decode("utf-8", errors="ignore").strip()
@@ -1813,10 +2029,17 @@ def IMUandEncoder(counts, head):
 				try:
 					head.value = float(esp_data[0])
 					counts.value = int(esp_data[1])
+					last_update = time.time()
 				except ValueError:
 					print(f"⚠️ Malformed ESP data: {esp_data}")
 			else:
 				print(f"⚠️ Incomplete ESP data: {esp_data}")
+
+			if time.time() - last_update > 2:
+				print("⚠️ IMU/encoder data stale for 2s - link may have dropped")
+			if time.time() - last_heartbeat > 5:
+				print(f"[IMU] heartbeat: head={head.value:.1f} counts={counts.value} last_update={time.time()-last_update:.1f}s ago")
+				last_heartbeat = time.time()
 	except Exception as e:
 		print(f"Exception Encoder:{e}")
 	finally:
@@ -1831,12 +2054,22 @@ if __name__ == "__main__":
 	try:
 		print("Starting process")
 
-		T = multiprocessing.Process(target=TOFProcess, args=(tof_front, tof_left, tof_right, tof_rear))
+		# Signaled by CameraProcess once open_camera() succeeds (or definitively
+		# fails). The other three processes wait on this before touching any
+		# hardware, so motor PWM / serial IMU reads / TOF I2C polling can't
+		# contend with camera USB enumeration - this was the actual cause of
+		# the intermittent "camera fails to initialize" issue, confirmed by
+		# comparing against roi_test.py (same hardware setup, but only ever
+		# starts CameraProcess - and never failed).
+		camera_ready = multiprocessing.Event()
 
-		P = multiprocessing.Process(target=CameraProcess, args=(red_b, green_b, pink_b, centr_y, centr_x, centr_y_red, centr_x_red, centr_x_pink, centr_y_pink, orange_l, blue_l, wall_left, wall_right, left_a, right_a, time_video, close_wall, red_area, green_area, outer_wall_left, outer_wall_right, centr_x_close, centr_y_close, head, fps_m, switch_state, park_wall, last_wall, last_wall_2))  # ← VL53L0X shared values (replaces tfmini)
-		S = multiprocessing.Process(target=DriveProcess, args=(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, centr_x_red, centr_x_pink, centr_y_pink, head, orange_l, blue_l, wall_left, wall_right, left_a, right_a, time_video, close_wall, red_area, green_area, outer_wall_left, outer_wall_right, centr_x_close, centr_y_close, tof_front, tof_left, tof_right, tof_rear, fps_m, switch_state, park_wall, last_wall, last_wall_2))  # ← VL53L0X shared values (replaces tfmini)
-		E = multiprocessing.Process(target=IMUandEncoder, args=(counts, head))
+		T = multiprocessing.Process(target=TOFProcess, args=(tof_front, tof_left, tof_right, tof_rear, camera_ready))
+
+		P = multiprocessing.Process(target=CameraProcess, args=(red_b, green_b, pink_b, centr_y, centr_x, centr_y_red, centr_x_red, centr_x_pink, centr_y_pink, orange_l, blue_l, wall_left, wall_right, left_a, right_a, time_video, close_wall, red_area, green_area, outer_wall_left, outer_wall_right, centr_x_close, centr_y_close, head, fps_m, switch_state, park_wall, last_wall, last_wall_2, camera_ready))  # ← VL53L0X shared values (replaces tfmini)
+		S = multiprocessing.Process(target=DriveProcess, args=(red_b, green_b, pink_b, counts, centr_y, centr_x, centr_y_red, centr_x_red, centr_x_pink, centr_y_pink, head, orange_l, blue_l, wall_left, wall_right, left_a, right_a, time_video, close_wall, red_area, green_area, outer_wall_left, outer_wall_right, centr_x_close, centr_y_close, tof_front, tof_left, tof_right, tof_rear, fps_m, switch_state, park_wall, last_wall, last_wall_2, camera_ready))  # ← VL53L0X shared values (replaces tfmini)
+		E = multiprocessing.Process(target=IMUandEncoder, args=(counts, head, camera_ready))
 		P.start()
+		time.sleep(3)
 		E.start()
 		S.start()
 		T.start()
