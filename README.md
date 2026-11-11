@@ -1,5 +1,5 @@
 # WRO 2026 Future Engineers - Team Glitch
-
+ 
 <div align="center">
 <img src="other/team_logo.png" width="500" align="center">
   
@@ -49,14 +49,15 @@ Each folder in this repository contains detailed technical content:
 
 | Folder | Content | 
 |--------|---------|
-| `v-photos/` | Robot photos - 6 angles and labelled component view |
-| `t-photos/` | Team photos - official and fun |
-| `schemes/` | Wiring diagrams and power architecture |
-| `models/` | 3D print STL files, STEP CAD files for polycarbonate cuts |
-| `src/` | Main Python scripts - obstacle, open and vision pipeline |
-| `versionTest/` | Test Python scripts - All modules testing|
-| `other/` | Component images used in this README |
+| `v-photos/` | Robot photos - 6 angles, isometric, and labelled component view |
+| `t-photos/` | Team photos - official, fun, Nationals stage |
+| `schemes/` | Wiring diagrams, calculations and power architecture |
+| `models/` | STL & STEP CAD files for 3D printing and poly cuts, DXF & CAD Drawings for dimension specifications |
+| `src/` | Main Python scripts - obstacle, open and vision pipeline + subsystem scripts |
+| `versionTest/` | Test Python scripts - All modules testing + PID gains file |
+| `other/` | Component images, diagrams used in this README |
 | `document/` | Engineering document PDF |
+| `service-files/` | Service scripts to run open/obstacle on boot |
 ---
 
 ## 👥 The Team
@@ -148,30 +149,30 @@ WRO 2026 Future Engineers is a self-driving car challenge on a 3m × 3m racetrac
     <td align="center"><b>Rear View</b></td>
   </tr>
   <tr>
-    <td><img src="v-photos/front.jpeg" width="250"></td>
-    <td><img src="v-photos/rear.jpeg" width="250"></td>
+    <td><img src="v-photos/front.png" width="250"></td>
+    <td><img src="v-photos/rear.png" width="250"></td>
   </tr>
   <tr>
     <td align="center"><b>Left Side</b></td>
     <td align="center"><b>Right Side</b></td>
   </tr>
   <tr>
-    <td><img src="v-photos/left.jpeg" width="250"></td>
-    <td><img src="v-photos/right.jpeg" width="250"></td>
+    <td><img src="v-photos/left.png" width="250"></td>
+    <td><img src="v-photos/right.png" width="250"></td>
   </tr>
   <tr>
     <td align="center"><b>Top View</b></td>
     <td align="center"><b>Bottom View</b></td>
   </tr>
   <tr>
-    <td><img src="v-photos/top.jpeg" width="250"></td>
-    <td><img src="v-photos/bottom.jpeg" width="250"></td>
+    <td><img src="v-photos/top.png" width="250"></td>
+    <td><img src="v-photos/bottom.png" width="250"></td>
   </tr>
   <tr>
     <td colspan="2" align="center"><b>Labelled Component View</b></td>
   </tr>
   <tr>
-    <td colspan="2" align="center"><img src="v-photos/Labelled Component View.jpg" width="500"></td>
+    <td colspan="2" align="center"><img src="v-photos/labelled_electronics.png" width="500"></td>
   </tr>
 </table>
 
@@ -182,14 +183,14 @@ WRO 2026 Future Engineers is a self-driving car challenge on a 3m × 3m racetrac
 | Parameter | Value |
 |-----------|-------|
 | **Dimensions** | 190 × 120 × 300 mm |
-| **Weight** | 1.31 kg |
+| **Weight** | 1.35 kg |
 | **Drive Type** | Rear-wheel drive, 12V DC geared motor + external quadrature encoder |
 | **Steering** | Servo-actuated parallel steering system |
 | **Primary Brain** | Raspberry Pi 4B (4 GB) |
 | **Co-processor** | Seeed XIAO ESP32-C3 (IMU + encoder over USB UART) |
 | **Vision** | USB Camera + OpenCV HSV pipeline (no Edge TPU) |
 | **Heading** | Adafruit BNO085 9-DOF IMU (on XIAO, I2C) |
-| **Max Speed** | 1 m/s |
+| **Max Speed** | 0.69 m/s |
 
 ### Performance Specifications
 
@@ -210,52 +211,45 @@ WRO 2026 Future Engineers is a self-driving car challenge on a 3m × 3m racetrac
 
 | Component | Image | Specifications | Role | Source |
 |-----------|-------|---------------|------|--------|
-| **Raspberry Pi 4 Model B (4GB)** | ![RPi4](other/raspberry_pi4.png) | Quad-core Cortex-A72 @ 1.8GHz, 4 GB LPDDR4, USB 3.0, GPIO 40-pin | Main compute - vision, sensor fusion, PID control via pigpio | [robu.in](https://robu.in/product/raspberry-pi-4-model-b-with-4-gb-ram/) |
-| **Seeed XIAO ESP32-C3** | ![XIAO](other/xiao_esp32c3.png) | ESP32-C3 RISC-V @160MHz, 400KB SRAM, USB-C, 3.3V logic, 21×17.5mm | Co-processor - BNO085 IMU + external encoder, streams to Pi at 115200 baud | [robu.in](https://robu.in/product/seeed-studio-xiao-esp32c3/) |
-| **Benewake TFmini Plus LiDAR ×1** | ![TFmini Plus](other/tfmini_plus.png) | 0.1–12m, ±5cm accuracy, 3.6° FOV, UART 115200, 5V, IP65, 42×15×16mm | Right-side parking proximity - when `distance < 150mm` parking approach confirmed | [robu.in](https://robu.in/product/tfmini-plus-lidar-distance-sensor-for-drones-uav-uas-robots-12m/) |
-| **Adafruit BNO085 IMU** | ![BNO085](other/bno085.jpg) | 9-DOF, ARM Cortex-M0 fusion, Euler @100Hz, I2C | Absolute heading for PID steering - prevents drift across all 3 laps | [evelta.com](https://evelta.com/adafruit-bno085-9-dof-orientation-imu-fusion-breakout/) |
-| **HikVision USB Camera** | ![Camera](other/camera_ds_u02.png) | 2MP, 1080P @ 30fps, ultra-wide, USB 2.0 | HSV pipeline input - detects pillars, parking walls, floor lines, walls | [amazon.in](https://www.amazon.in/HIKVISION-DS-U02-Distortion-Adjustment-Conferencing/dp/B0929FSQ2J) |
-| **Johnson 900RPM Grade A** (RKI-1142) | ![Johnson900](other/johnson_motor.png) | 12V DC, 900RPM no-load, high-torque grade-A gearbox, no built-in encoder | Rear-wheel drive via Vikram-453R6. External encoder on output shaft | [robokits.co.in](https://robokits.co.in/motors/dc-motor/12v-johnson-motors/johnson-geared-dc-motors/johnson-motor-high-torque-dc-geared-12v-900rpm-grade-a) |
-| **7Semi Vikram-453R6** | ![Vikram453R6](other/vikram_453r6.png) | DRV8871, 6.5–45V, 2A cont / 3.6A peak, IN1/IN2 PWM, thermal protection | Motor driver - IN1=GPIO16, IN2=GPIO20. Auto-recovery on overcurrent | [7semi.com](https://7semi.com/7semi-vikram-453r6-dc-motor-driver-breakout-6-5v-45v-input-3-6a-single-channel/) |
-| **Custom PCB** | ![Custom PCB](other/custom_pcb.png) | Custom designed using Altium. Placed on pins of the RasPi, mounts the ESP and DC-DC converter. Contains JST 2.54mm and USB ports | Simplifies wiring | - |
-
-**Component Selection Philosophy:** We prioritize components that are widely available in India, well-documented, and that we can easily separate by their job - the Pi handles vision and decisions, the XIAO handles encoder and IMU (requiring accuracy and speed), and the TFmini Plus handles parking proximity without sharing the I2C bus. Every component was chosen because it solves a specific, tested problem.
+| **Raspberry Pi 4 Model B (4GB)** | ![RPi4](other/parts_images/raspberry_pi4.png) | Quad-core Cortex-A72 @ 1.8GHz, 4 GB LPDDR4, USB 3.0, GPIO 40-pin | Main compute - vision, sensor fusion, PID control via pigpio | [robu.in](https://robu.in/product/raspberry-pi-4-model-b-with-4-gb-ram/) |
+| **Seeed XIAO ESP32-C3** | ![XIAO](other/parts_images/xiao_esp32c3.png) | ESP32-C3 RISC-V @160MHz, 400KB SRAM, USB-C, 3.3V logic, 21×17.5mm | Co-processor - BNO085 IMU + external encoder, streams to Pi at 115200 baud | [robu.in](https://robu.in/product/seeed-studio-xiao-esp32c3/) |
+| **Adafruit BNO085 IMU** | ![BNO085](other/parts_images/bno085.jpg) | 9-DOF, ARM Cortex-M0 fusion, Euler @100Hz, I2C | Absolute heading for PID steering - prevents drift across all 3 laps | [evelta.com](https://evelta.com/adafruit-bno085-9-dof-orientation-imu-fusion-breakout/) |
+| **HikVision USB Camera** | ![Camera](other/parts_images/camera_ds_u02.png) | 2MP, 1080P @ 30fps, ultra-wide, USB 2.0 | HSV pipeline input - detects pillars, parking walls, floor lines, walls | [amazon.in](https://www.amazon.in/HIKVISION-DS-U02-Distortion-Adjustment-Conferencing/dp/B0929FSQ2J) |
+| **Johnson 900RPM Grade A** (RKI-1142) | ![Johnson900](other/parts_images/johnson_motor.png) | 12V DC, 900RPM no-load, high-torque grade-A gearbox, no built-in encoder | Rear-wheel drive via Vikram-453R6. External encoder on output shaft | [robokits.co.in](https://robokits.co.in/motors/dc-motor/12v-johnson-motors/johnson-geared-dc-motors/johnson-motor-high-torque-dc-geared-12v-900rpm-grade-a) |
+| **7Semi Vikram-453R6** | ![Vikram453R6](other/parts_images/vikram_453r6.png) | DRV8871, 6.5–45V, 2A cont / 3.6A peak, IN1/IN2 PWM, thermal protection | Motor driver - IN1=GPIO16, IN2=GPIO20. Auto-recovery on overcurrent | [7semi.com](https://7semi.com/7semi-vikram-453r6-dc-motor-driver-breakout-6-5v-45v-input-3-6a-single-channel/) |
+| **Red-Yellow-Green LED** | ![red,yellow,green LED](other/parts_images/rgb_led.jpg) | 5V red, yellow, green LED module with shared VCC, GND | Live update of camera feed - colour flashing is the prominent colour dected | [robu.in](https://robu.in/product/led-traffic-lights-signal-module-digital-signal-output-traffic-light-module/) |
+| **Custom PCB** | ![Custom PCB](other/parts_images/custom_pcb.png) | Custom designed using Altium. Placed on pins of the RasPi, mounts the ESP and DC-DC converter. Contains JST 2.54mm and USB ports | Simplifies wiring | - |
+<!-- | **Benewake TFmini Plus LiDAR ×1** | ![TFmini Plus](other/parts_images/tfmini_plus.png) | 0.1–12m, ±5cm accuracy, 3.6° FOV, UART 115200, 5V, IP65, 42×15×16mm | Right-side parking proximity - when `distance < 150mm` parking approach confirmed | [robu.in](https://robu.in/product/tfmini-plus-lidar-distance-sensor-for-drones-uav-uas-robots-12m/) | -->
+**Component Selection Philosophy:** We prioritize components that are widely available in India, well-documented, and that we can easily separate by their job - the Pi handles vision and decisions, the XIAO handles encoder and IMU (requiring accuracy and speed), and. Every component was chosen because it solves a specific, tested problem.
 
 ### Power Architecture
 
 Our robot uses a **dual-rail power system**. The motor driver (and motor) are supplied directly from the 12V battery, and separated from all other electronics because it causes PWM spikes. The primary electronics (Pi, ESP32, Servo, TFMini) are on a regulated 5V from a DC-DC converter, and the encoder and IMU are powered from the ESP32's 3.3v rail.
 
 ```
-[12V LiPo Battery]
+[12V 850 mAh LiPo Battery]
        |
-       ├── [Vikram-453R6 (IN1=GPIO16, IN2=GPIO20)] ──> Johnson 900RPM Motor
+       ├── Vikram-453R6 (IN1=GPIO16, IN2=GPIO20) ──> Johnson 900RPM Motor
        |
-       └── [5V Buck Converter]
-                   |
+       └── 5V Buck Converter (on PCB)
                    ├── Raspberry Pi 4 (5V/3A USB-C)
-                   │       └── [Pi UART /dev/ttyAMA1] ──> TFmini Plus right (5V)
                    ├── Servo UBEC (dedicated ≥5A)
-                   │       └── DS3235 servo signal → GPIO8
                    └── Seeed XIAO ESP32-C3 (via Pi USB-C)
                            └── [XIAO 3V3 rail] ──> BNO085 IMU (I2C)
-                                                    External encoder (GPIO)
+                                                   External encoder (GPIO)
 
-[I2C - XIAO only]     XIAO ←→ BNO085 (3.3V)
-[UART - Pi ttyAMA1]   TFmini Plus right → Pi
-[UART - Pi XIAO_USB]  XIAO → Pi - heading (float) + counts (int)
-[USB]                 Camera → Pi /dev/video0
 ```
 
 **Power budget:**
 
 | Component | Voltage | Current |
 |-----------|---------|---------|
-| Johnson 900RPM (loaded) | 12V | ~400mA typical, ~2A stall |
-| Raspberry Pi 4 | 5V | 1.0–1.5A |
-| XIAO ESP32-C3 | 5V via Pi USB | 25–40mA |
-| TFmini Plus ×1 | 5V | 110mA avg |
-| DS3235 servo | 5–6V UBEC | 5mA idle, ~2A stall |
-| **Total peak (referred to 12V)** | - | **~3.0A** |
+| Johnson 900RPM (loaded) | 12V | ~800mA running, ~2A stall |
+| Raspberry Pi 4 | 5V | 1.2A |
+| XIAO ESP32-C3 | 5V | 200mA |
+| BNO085x IMU | 3.3V | 50mA |
+| DS3235 servo | 5V | 1A running, ~2A stall |
+| **Total peak (referred to 12V)** | - | **21W** |
 
 ### Wiring Diagram
 
@@ -274,13 +268,12 @@ Our robot uses a **dual-rail power system**. The motor driver (and motor) are su
 | GPIO19 | XIAO reset | OUT |
 | GPIO20 | Vikram IN2 - reverse PWM | OUT |
 | GPIO26 | Blue LED | OUT |
-| /dev/ttyAMA1 | TFmini Plus right (UART RX) | IN |
 | /dev/XIAO_USB | XIAO ESP32-C3 (UART) | IN/OUT |
 | /dev/video0 | USB camera | IN |
 
 ### Sensor Placement Rationale
 
-**TFmini Plus - Right side:** Mounted at 60mm from ground on the right flank, perpendicular to the robot front. Used only during parking approach. Its 3.6° laser spot reads the outer wall cleanly - the VL53L0X it replaced had a 25° FOV that picked up floor reflections below 80mm.
+<!-- **TFmini Plus - Right side:** Mounted at 60mm from ground on the right flank, perpendicular to the robot front. Used only during parking approach. Its 3.6° laser spot reads the outer wall cleanly - the VL53L0X it replaced had a 25° FOV that picked up floor reflections below 80mm. -->
 
 **Camera:** Front-facing, slight downward angle. The camera's exposure is fixed at 200 because without this, auto-exposure flicker (1) between light/dark mat sections caused false negatives on every orange line crossing. It runs with an FPS of around 20.
 
@@ -297,21 +290,45 @@ During early testing we found the Pi's 3V3 rail was insufficient to power the BN
 ### Chassis Design
 
 <div align="center">
-<img src="models/gif_1.gif" alt="bot view 1" height="325">
-<img src="models/gif_2.gif" alt="bot view 1" height="325">
+<img src="models/gif_3.gif" alt="bot view 1" height="325">
+<img src="models/gif_4.gif" alt="bot view 2" height="325">
 </div>
 The chassis and electronics tray are CNC-cut from polycarbonate sheet (not 3D printed). The rear axle is driven by the Johnson 900RPM motor via direct coupling through a differential drive. The front parallel steering is actuated by the DS3235 35kg Servo (directly screwed on).
+
+**Polycarb Plate:**
+
+This is a CAD drawing (with dimensions) of the base polycarbonate chassis, to be CNC-cut. (CAD file is in /models/STL)
+<div align="center">
+<img src="models/CAD_drawings/poly_plate_drawing.png" alt = "chassis cad drawing" height = 350>
+</div>
 
 **Why Parallel Steering?** We first considered using Ackerman geometry to reduce wheel skid and tyre scrub, as well as being more compact. However, this system had too much mechanical play and the steering would jitter during turns and couldn't take sharp turns. Therefore, we decided to use a compact, lightweight parallel steering linkage, which helped us make our bot more compact and balanced.
 
 **Acknowledging Trade-Offs:**
 A parallel steering linkage makes the inner wheel skid on tight turns because each wheel follows a different radius. However, using custom designed wheels coated with cat-tongue grip tape helped us minimise tyre deformation.
 
+
+### Toppling Prevention and Stability
+
+Our robot design was focused on having a high camera mount and small light chassis. The higher camera mount lets the robot have a greater field of view, which reduces blind spots and lets it detect obstacles from further away. However, having the motor and electonics all placed along the mount at the rear made the robot extremely back- and top-heavy, leading to it falling when it tried to accelerate. 
+
+To fix this, we replaced the 3D-printed servo mounts and connections at the front with mild steel. This added a lot of stability when the robot was at a constant speed, but also increased the mass of the robot by ~450g, making increasing the load on the motor. These are CAD drawings (with dimensions) of the mild steel servo deadweights:
+<div align="center">
+<img src="models/CAD_drawings/mild_steel_dw_top_drawing.png" alt="deadweight top" height="300">
+<img src="models/CAD_drawings/mild_steel_dw_bottom_drawing.png" alt="deadweight bottom" height="300">
+</div>
+
+However, even this had a problem where when the robot had sudden jerks it toppled backwards. We didn't want to add more weight as it would adversely affect the motor, so instead we 3D printed leg at the rear end of the chassis, that ends 5mm above the ground. If the robot tipped back, the leg would keep it upright and let it fall back to normal.
+
+This is the CAD-generated center of mass comparison between the old (no deadweight) and new (deadweight+support) iterations of the robot.
+
+<img src="models/CAD_drawings/center_of_mass_comparison_drawing.png" alt="comparison drawing" align="center" height="300">
+
 ### Drive System
 
 **Motor Selection:**
 
-| Option | RPM | Torque | Verdict |
+| Option | Rated RPM (divided by 2 due to diff. gearbox) | Rated Torque (multiplied by 2 due to diff. gearbox) | Verdict |
 |--------|-----|--------|---------|
 | Johnson 300 RPM | 300 | 8 kg·cm | Too slow (barely fit within 3min) |
 | Johnson 600 RPM | 600 | 4.5 kg·cm | Enough torque but but limited top speed |
@@ -320,14 +337,17 @@ A parallel steering linkage makes the inner wheel skid on tight turns because ea
 
 **Drivetrain no-load speed calculation:**
 
+<img src="schemes/calculations/speed_calc_new.png" width="500" align="center">
 
-<img src="schemes/calculations/No-Load Speed Calculations.jpg" width="700" align="left">
+At the National Competition, we sent the motor shaft straight into a bevel gear connecting to the differential gearbox at a 39:13 ratio, meaning for every 3 rotations of the motor the wheels would rotate once. However, this was quite slow and for the International competition we wanted to improve our speed. Therefore, we added a second gearbox with a 1:1.5 ratio, effectively changing the output to 2:1. It was a good trade-off, with a much higher speed for a small decrease in torque.
+We chose not to change the differential as it was store-bought, and the motor as there weren't any motors in our battery range with higher RPM and similar torque. 
+
+**Torque Calculations**
+
+<img src="schemes/calculations/torque_calc_new.png">
 
 
-
-The Johnson 900RPM has no built-in encoder. An external quadrature encoder is mounted on the output shaft and read by the XIAO ESP32-C3. `SPEED_SCALE` (counts/sec at 100% duty) must be calibrated from run logs before enabling `ki_v` or `kd_v`.
-
-**Motor Driver:** The Vikram-453R6 (DRV8871) replaced the MDD3A after two driver failures - the MDD3A has no overcurrent protection. The DRV8871 adds hardware overcurrent detection, thermal shutdown, and auto-recovery. Its 45V ceiling can easily handle the inductive spikes. The IN1/IN2 PWM interface is pin-compatible with MDD3A so no code changes were needed.
+**Motor Driver:** The Vikram-453R6 (DRV8871) replaced the MDD3A after two driver failures - the MDD3A has no overcurrent protection. The DRV8871 adds hardware overcurrent detection, thermal shutdown, and auto-recovery. Its 45W ceiling can easily handle the inductive spikes. The IN1/IN2 PWM interface is pin-compatible with MDD3A so no code changes were needed.
 
 **Reducing Tyre Skid: Differential Gearbox:**
 Since while turning, both wheels follow a different turning radius, we decided to use a differential gearbox, which allows the wheels to rotate at different speeds while turning, reducing wheel slippage and improving traction. It uses a ring gear, spider gear, and side gears connected to the wheels, allowing the outer wheel to rotate faster and the inner wheel slower during turns while maintaining a constant motor speed.
@@ -350,30 +370,36 @@ Since while turning, both wheels follow a different turning radius, we decided t
 </div>
 
 **Version 1 - Early Iteration:**
-- Raspberry Pi + Arduino Mega co-processor
-- Google Coral Edge TPU for object detection (TFLite quantized model)
-- RPLidar C1 for turn detection
-- Johnson 600RPM motor, MDD3A driver
-- Problem: Parking unreliable - single-pass approach would overshoot. LiDAR subprocess was also very complex and slow
+- Arduino Mega main processor
+- Pixy2 Camera for vision
+- GS2010MG 20kgcm Servo Motor
+- TFMini Plus LiDAR (front facing)
+- Johnsons Grade B 600RPM motor, MDD3A driver
+- 12V DC Coin LED (x2)
+- Problem: Parking unreliable - single-pass approach would overshoot. Camera also had a lower FoV, and motor didn't have enough torque 
 
 **Version 2 - India Nationals:**
 - Replaced Arduino Mega + Coral TPU + RPLidar with:
   - **XIAO ESP32-C3** - BNO085 IMU + external encoder over USB UART
-  - **1× TFmini Plus** (right only) - parking proximity over UART
-  - **OpenCV HSV pipeline** - replaces Edge TPU ML model entirely
-- Switched to **Johnson 900RPM Grade A** + external encoder
-- Switched to **Vikram-453R6** (DRV8871) - overcurrent protection
-- Camera FPS improved from ~5 to ~25 by removing `cv2.imshow` from live loop
+  - **1×  TFmini Plus** (right only) - parking proximity over UART
+  - **OpenCV HSV pipeline** - controls the HikVision camera
+- Added a custom PCB to minimize risk of loose/tangled wires, mounted directly on the Pi.
+- Switched to **Johnson 900RPM Grade A** + external encoder (higher speed, lower torque)
+- Switched to **Vikram-453R6** (DRV8871) - overcurrent protection and more compact
+- Switched to **Hikvision DS-UO2 Webcam** - compatible with OpenCV and RasPi
 - Added `gains.json` which allowed us to change PID gains during a run (test multiple values)
 
 **Version 3 - Internationals:**
-- Working on a new MATLAB calibration code that allows us to record the robot run, extract colour data from it, and calibrate HSV
+- MATLAB calibration code that allows us to record the robot run, extract colour data from it, and calibrate HSV
+- Gear ratio change from 3:1 to 2:1, effectively changing output RPM from 300 to 450
+- Removed TFMini entirely - all based on camera now
 - Working on making a better balance on the robot and reducing weight
+- Removed encoder/speed PID entirely, as now the motor had enough torque to run continously
 
 ### Potential Future Improvements
 
 - Switch to a motor with a built-in encoder to eliminate the external encoder mount complexity
-- Add a rear-facing camera or second TFmini for reverse safety during parking
+- Add a rear-facing camera or TFmini for reverse safety during parking
 - Replace polycarbonate tray with a custom PCB carrier for better wire management
 - Implement automatic `SPEED_SCALE` calibration from the first run's log file
 
@@ -775,7 +801,7 @@ Earlier, our parking versions used encoder counts and timeouts as terminal condi
 
 - Motor with built-in encoder to simplify hardware
 - Auto `SPEED_SCALE` calibration from first run log
-- Rear camera or second TFmini for reverse safety
+- Rear camera or TFmini for reverse safety
 - Custom carrier PCB to clean up wiring
 - Online PID gain scheduling based on lap time (encoder data already available)
 
@@ -808,11 +834,10 @@ We use GitHub as our central platform for version control, documentation, and pu
 **Commit philosophy:** Each commit represents a tested, working state of the robot. We don't commit broken intermediate states - every push to `main` is something the robot could actually run in competition.
 
 **Documentation standards:**
-- ✅ Every hardware change reflected in README on the same day
+- ✅ Every hardware change reflected in README 
 - ✅ Every code change explained in comments, not just committed
 - ✅ Run logs included in `/logs/` for traceability
 - ✅ Wiring diagram updated whenever hardware changes
-- ✅ All placeholder values filled in before nationals submission
 
 ---
 
@@ -925,28 +950,23 @@ sudo python3 open_nationals_final.py # Open Challenge
 
 Logs: `/home/pi/wro_logs/logs/`. Kill switch: GPIO6.
 
-### GitHub File Structure
+### Code File Structure
 
 ```
 WRO_2026/
-├── versionTest/
-│   ├── obstacle_nationals_final.py# Obstacle - 3-process
+├── src/
+│   ├── obstacle_nationals_final.py# Nationals Obstacle - 3-process
+│   ├── obstacle_nov.py            # New faster obstacle code without speed PID
 │   ├── open_nationals_final.py    # Open - 3-process
 │   ├── vision_pipeline_new.py     # HSV pipeline - obstacle
 │   ├── vision_pipeline_3.py       # HSV pipeline - open
 │   ├── TFmini.py                  # TFmini Plus UART reader
 │   ├── Encoder.py                 # Dead-reckoning (open challenge)
 │   ├── Servo.py                   # Servo abstraction (pigpio)
-│   ├── build_video.py             # Post-run MP4 reconstruction
-│   └── gains.json                 # Hot-reloadable PID gains
-├── src/xiao/imu_encoder.ino       # XIAO firmware
-├── models/
-│   ├── 3D prints/
-│   └── STEP/
-├── schemes/
-│   ├── wiring-diagrams/
-└── v-photos/
-```
+│   ├── gains.json                 # Hot-reloadable PID gains
+│   ├── esp_final.ino              # ESP32 IMU/encoder reader + communication to Pi
+│   ├── OpenCV/                    
+│   │   ├── HSVCalibrateNew.py     # New faster HSV calibration
 
 ---
 
@@ -959,7 +979,8 @@ This table shows the dates of the main commits we have made to the GitHub, and h
 |2|July 20 2026|37 days|141 days|
 |3|Aug 12 2026|14 days|118 days|
 |4|Oct 7 2026|   ---   |62 days|
+|5|Nov 11 2026|   ---   |29 days|
 
 **Team Glitch - WRO 2026 Future Engineers - International Finals**
 
-*Documentation last updated: October 2026*
+*Documentation last updated: November 2026*
