@@ -18,8 +18,8 @@ Our name, **Glitch**, reflects our engineering philosophy - finding the unexpect
 > *"Every test run is a debugging session. Every crash is data."*
 
 **Current best timings:**
-- **Open Challenge**: ~45 seconds (full score)
-- **Obstacle Challenge**: ~65 seconds (full score)
+- **Open Challenge**: ~25 seconds (full score)
+- **Obstacle Challenge**: ~50 seconds (full score)
 
 ---
 
@@ -255,7 +255,7 @@ Our robot uses a **dual-rail power system**. The motor driver (and motor) are su
 | XIAO ESP32-C3 | 5V | 200mA | 1.0W |
 | DS3235 servo | 5V | 1A running, 1.9A stall | 5.0W (9.5W stall) |
 | BNO085x IMU | 3.3V | 7.5mA | 0.025W |
-| **Regular total** | - | - | **~21W** |
+| **Regular total** | - | - | **~21.63W** |
 
 **Battery Specifications & Battery Runtime Calculations:**
 <div align="center">
@@ -996,7 +996,7 @@ This table shows the dates of the main commits we have made to the GitHub, and h
 |2|July 20 2026|37 days|141 days|
 |3|Aug 12 2026|14 days|118 days|
 |4|Oct 7 2026|   ---   |62 days|
-|5|Nov 11 2026|   ---   |29 days|
+|5|Nov 13 2026|   ---   |29 days|
 
 **Team Glitch - WRO 2026 Future Engineers - International Finals**
 

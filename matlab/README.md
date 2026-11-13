@@ -49,3 +49,6 @@ The exported file contains:
 - Minimum region pixel area.
 - Mask-cleaning configuration.
 - Enabled colour list.
+
+### Note:
+The matlab class must named "HSVVideoCalibratorV1.m" in order to work as required.

@@ -58,99 +58,165 @@ classdef HSVVideoCalibratorV1 < handle
         function buildUI(obj)
             screen = get(groot,'ScreenSize');
             w = min(1500,screen(3)-40); h = min(960,screen(4)-80);
-            obj.fig = uifigure('Name','HSV Video Calibrator', ...
+            % Dark control-room theme with bright cyan accents.
+            C.bg       = [0.055 0.075 0.115];
+            C.panel    = [0.090 0.125 0.185];
+            C.panel2   = [0.120 0.165 0.235];
+            C.input    = [0.155 0.205 0.285];
+            C.text     = [0.91 0.95 1.00];
+            C.muted    = [0.62 0.72 0.84];
+            C.cyan     = [0.12 0.72 0.95];
+            C.blue     = [0.12 0.42 0.95];
+            C.green    = [0.16 0.78 0.43];
+            C.orange   = [0.98 0.57 0.20];
+            obj.fig = uifigure('Name','HSV Studio | Video Calibration', ...
                 'Position',[max(1,(screen(3)-w)/2) max(1,(screen(4)-h)/2) w h], ...
+                'Color',C.bg, ...
                 'CloseRequestFcn',@(~,~)obj.requestClose());
             g = uigridlayout(obj.fig,[3 2]);
-            g.ColumnWidth = {'1x',440}; g.RowHeight = {'1x','1x',80};
+            g.ColumnWidth = {'1x',460}; g.RowHeight = {'1x','1x',92};
+            g.BackgroundColor = C.bg; g.Padding = [14 12 14 12];
+            g.ColumnSpacing = 12; g.RowSpacing = 10;
             obj.originalAxes = uiaxes(g); obj.place(obj.originalAxes,1,1);
             obj.resultAxes = uiaxes(g); obj.place(obj.resultAxes,2,1);
             for ax = [obj.originalAxes obj.resultAxes]
                 ax.XTick=[]; ax.YTick=[]; ax.Interactions=[];
                 ax.Toolbar.Visible='off'; disableDefaultInteractivity(ax);
+                ax.Color = C.bg;
+                ax.XColor = C.muted; ax.YColor = C.muted;
             end
-            title(obj.originalAxes,'Original video - click to sample and pause');
-            title(obj.resultAxes,'All colours highlighted');
-            panel=uipanel(g,'Title','Colour calibration','Scrollable','on');
+            title(obj.originalAxes,'LIVE FRAME  |  CLICK TO SAMPLE', ...
+                'Color',C.text,'FontSize',13,'FontWeight','bold');
+            title(obj.resultAxes,'MASK PREVIEW  |  ALL ACTIVE COLOURS', ...
+                'Color',C.text,'FontSize',13,'FontWeight','bold');
+            panel=uipanel(g,'Title','  HSV CONTROL DECK  ', ...
+                'Scrollable','on','BackgroundColor',C.panel, ...
+                'ForegroundColor',C.cyan,'FontSize',13,'FontWeight','bold');
             obj.place(panel,[1 3],2);
-            c=uigridlayout(panel,[24 3],'Scrollable','on'); c.ColumnWidth={80,'1x',72};
+            c=uigridlayout(panel,[24 3],'Scrollable','on');
+            c.ColumnWidth={92,'1x',76};
+            c.BackgroundColor=C.panel; c.Padding=[12 10 12 10];
+            c.RowSpacing=7; c.ColumnSpacing=8;
             c.RowHeight={32,42,50,28,26,48,48,48,48,48,48,28,28,32, ...
                 32,32,32,32,66,112,54,70,28,'1x'};
-            obj.button(c,'Import Video',1,[1 3],@(~,~)obj.importVideo());
-            obj.info=uilabel(c,'Text','No video loaded','WordWrap','on');
+            bImport=obj.button(c,'IMPORT VIDEO',1,[1 3],@(~,~)obj.importVideo());
+            bImport.BackgroundColor=C.cyan; bImport.FontColor=[0.03 0.08 0.13];
+            bImport.FontWeight='bold'; bImport.FontSize=12;
+            obj.info=uilabel(c,'Text','NO VIDEO LOADED','WordWrap','on', ...
+                'FontColor',C.muted,'BackgroundColor',C.panel2,'FontSize',10);
             obj.place(obj.info,2,[1 3]);
             colours=uigridlayout(c,[1 6]); obj.place(colours,3,[1 3]);
-            colours.Padding=[0 3 0 3]; colours.ColumnSpacing=3;
+            colours.Padding=[2 4 2 4]; colours.ColumnSpacing=5;
+            colours.BackgroundColor=C.panel;
             obj.colourButtons=gobjects(1,6);
             for k=1:6
                 fg=[0 0 0]; if ismember(k,[1 3 5 6]), fg=[1 1 1]; end
                 obj.colourButtons(k)=uibutton(colours,'Text',obj.names{k}, ...
-                    'FontSize',9,'BackgroundColor',obj.rgb(k,:), ...
+                    'FontSize',9,'FontWeight','bold','BackgroundColor',obj.rgb(k,:), ...
                     'FontColor',fg,'ButtonPushedFcn',@(~,~)obj.selectColour(k));
             end
             obj.enabledBox=uicheckbox(c,'Text','Highlight selected colour', ...
-                'Value',true,'ValueChangedFcn',@(~,~)obj.changeEnabled());
+                'Value',true,'FontColor',C.text, ...
+                'ValueChangedFcn',@(~,~)obj.changeEnabled());
             obj.place(obj.enabledBox,4,[1 3]);
-            label=uilabel(c,'Text','HSV: H 0-179 | S/V 0-255 | Hue min > max wraps');
+            label=uilabel(c,'Text','HSV RANGE   |   H: 0 TO 179   |   S / V: 0 TO 255', ...
+                'FontColor',C.cyan,'BackgroundColor',C.panel,'FontWeight','bold', ...
+                'FontSize',10);
             obj.place(label,5,[1 3]);
             labels={'H min','H max','S min','S max','V min','V max'};
             obj.sliders=gobjects(1,6); obj.fields=gobjects(1,6);
             for k=1:6
                 cap=255; if k<=2, cap=179; end
-                label=uilabel(c,'Text',labels{k}); obj.place(label,k+5,1);
+                label=uilabel(c,'Text',upper(labels{k}), ...
+                    'FontColor',C.text,'BackgroundColor',C.panel, ...
+                    'FontWeight','bold','FontSize',10);
+                obj.place(label,k+5,1);
                 obj.sliders(k)=uislider(c,'Limits',[0 cap], ...
                     'MajorTicks',[0 cap],'MinorTicks',[], ...
+                    'FontColor',C.muted, ...
                     'ValueChangingFcn',@(~,e)obj.changeBound(k,e.Value,false), ...
                     'ValueChangedFcn',@(~,e)obj.changeBound(k,e.Value,true));
+                % BackgroundColor is supported by some MATLAB releases for
+                % UI sliders. Keep a safe fallback for older releases.
+                try, obj.sliders(k).BackgroundColor=C.blue; catch, end
                 obj.place(obj.sliders(k),k+5,2);
                 obj.fields(k)=uieditfield(c,'numeric','Limits',[0 cap], ...
-                    'RoundFractionalValues','on', ...
+                    'RoundFractionalValues','on','BackgroundColor',C.input, ...
+                    'FontColor',C.text, ...
                     'ValueChangedFcn',@(s,~)obj.changeBound(k,s.Value,true));
                 obj.place(obj.fields(k),k+5,3);
             end
-            obj.redBandBox=uicheckbox(c,'Text','Red: also include hue 170-179', ...
-                'Value',true,'ValueChangedFcn',@(~,~)obj.changeRedBand());
+            obj.redBandBox=uicheckbox(c,'Text','RED: ALSO INCLUDE HUE 170 TO 179', ...
+                'Value',true,'FontColor',C.text, ...
+                'ValueChangedFcn',@(~,~)obj.changeRedBand());
             obj.place(obj.redBandBox,12,[1 3]);
-            obj.cleanupBox=uicheckbox(c,'Text','Clean masks: 5 x 5 opening + closing', ...
-                'Value',true,'ValueChangedFcn',@(~,~)obj.settingsChanged());
+            obj.cleanupBox=uicheckbox(c,'Text','CLEAN MASKS: 5 X 5 OPEN + CLOSE', ...
+                'Value',true,'FontColor',C.text, ...
+                'ValueChangedFcn',@(~,~)obj.settingsChanged());
             obj.place(obj.cleanupBox,13,[1 3]);
-            label=uilabel(c,'Text','Min pixels'); obj.place(label,14,1);
+            label=uilabel(c,'Text','MIN PIXELS','FontColor',C.text, ...
+                'BackgroundColor',C.panel,'FontWeight','bold');
+            obj.place(label,14,1);
             obj.areaField=uieditfield(c,'numeric','Limits',[0 Inf], ...
                 'RoundFractionalValues','on','Value',300, ...
+                'BackgroundColor',C.input,'FontColor',C.text, ...
                 'ValueChangedFcn',@(~,~)obj.settingsChanged());
             obj.place(obj.areaField,14,2);
             obj.areaField.Tooltip='Remove connected regions smaller than this pixel area. Set 0 to keep all.';
-            label=uilabel(c,'Text','Overlay'); obj.place(label,15,1);
+            label=uilabel(c,'Text','OVERLAY','FontColor',C.text, ...
+                'BackgroundColor',C.panel,'FontWeight','bold');
+            obj.place(label,15,1);
             obj.opacitySlider=uislider(c,'Limits',[0 1],'Value',0.5, ...
-                'MajorTicks',[],'MinorTicks',[], ...
+                'MajorTicks',[],'MinorTicks',[],'FontColor',C.muted, ...
                 'ValueChangedFcn',@(~,~)obj.settingsChanged());
+            try, obj.opacitySlider.BackgroundColor=C.blue; catch, end
             obj.place(obj.opacitySlider,15,[2 3]);
             obj.viewBox=uidropdown(c,'Items',{'All colours','Selected mask'}, ...
+                'BackgroundColor',C.input,'FontColor',C.text, ...
                 'ValueChangedFcn',@(~,~)obj.render()); obj.place(obj.viewBox,16,[1 3]);
             obj.button(c,'Reset selected colour',17,[1 3],@(~,~)obj.resetColour());
             obj.button(c,'Save Calibration',18,[1 2],@(~,~)obj.saveCalibration());
             obj.button(c,'Load',18,3,@(~,~)obj.loadCalibration());
-            obj.rangeText=uitextarea(c,'Editable','off'); obj.place(obj.rangeText,19,[1 3]);
-            obj.stats=uitextarea(c,'Editable','off','Value',{'No video loaded'});
+            obj.rangeText=uitextarea(c,'Editable','off', ...
+                'BackgroundColor',C.panel2,'FontColor',C.cyan, ...
+                'FontName','Consolas','FontSize',11); obj.place(obj.rangeText,19,[1 3]);
+            obj.stats=uitextarea(c,'Editable','off','Value',{'No video loaded'}, ...
+                'BackgroundColor',C.panel2,'FontColor',C.text, ...
+                'FontName','Consolas','FontSize',10);
             obj.place(obj.stats,20,[1 3]);
             obj.button(c,'Export Python HSV_RANGES',21,[1 3],@(~,~)obj.exportPython());
             label=uilabel(c,'WordWrap','on','Text', ...
-                ['Select a colour, then click the upper video to pause and sample a 5 x 5 patch. ' ...
-                'Fine-tune with sliders or numbers. All six settings are retained.']);
+                ['SELECT A COLOUR, THEN CLICK THE VIDEO TO SAMPLE A 5 X 5 PATCH. ' ...
+                'ADJUST THE HSV LIMITS WITH THE BLUE SLIDERS OR NUMBER FIELDS.'], ...
+                'FontColor',C.muted,'BackgroundColor',C.panel,'FontSize',10);
             obj.place(label,22,[1 3]);
-            obj.status=uilabel(c,'Text','Ready','WordWrap','on'); obj.place(obj.status,23,[1 3]);
+            obj.status=uilabel(c,'Text','READY','WordWrap','on', ...
+                'FontColor',C.green,'BackgroundColor',C.panel2,'FontWeight','bold');
+            obj.place(obj.status,23,[1 3]);
             t=uigridlayout(g,[2 5]); obj.place(t,3,1);
-            t.RowHeight={28,28}; t.ColumnWidth={90,70,70,'1x',110};
-            obj.playButton=obj.button(t,'Play',1,1,@(~,~)obj.togglePlay());
-            obj.button(t,'Back',1,2,@(~,~)obj.step(-1));
-            obj.button(t,'Next',1,3,@(~,~)obj.step(1));
-            label=uilabel(t,'Text','Seek to seconds:','HorizontalAlignment','right');
+            t.RowHeight={32,34}; t.ColumnWidth={100,78,78,'1x',120};
+            t.BackgroundColor=C.panel; t.Padding=[8 5 8 5];
+            t.ColumnSpacing=8; t.RowSpacing=5;
+            obj.playButton=obj.button(t,'PLAY',1,1,@(~,~)obj.togglePlay());
+            obj.playButton.BackgroundColor=C.green;
+            obj.playButton.FontColor=[0.03 0.10 0.07];
+            obj.playButton.FontWeight='bold';
+            bBack=obj.button(t,'PREVIOUS',1,2,@(~,~)obj.step(-1));
+            bBack.BackgroundColor=C.panel2; bBack.FontColor=C.text;
+            bNext=obj.button(t,'NEXT',1,3,@(~,~)obj.step(1));
+            bNext.BackgroundColor=C.panel2; bNext.FontColor=C.text;
+            label=uilabel(t,'Text','SEEK TO SECONDS','HorizontalAlignment','right', ...
+                'FontColor',C.text,'BackgroundColor',C.panel,'FontWeight','bold');
             obj.place(label,1,4);
             obj.secondsField=uieditfield(t,'numeric','Limits',[0 Inf], ...
+                'BackgroundColor',C.input,'FontColor',C.text, ...
                 'ValueChangedFcn',@(s,~)obj.seek(s.Value)); obj.place(obj.secondsField,1,5);
             obj.timeline=uislider(t,'Limits',[0 1],'MajorTicks',[],'MinorTicks',[], ...
+                'FontColor',C.green, ...
                 'ValueChangingFcn',@(~,e)obj.scrub(e.Value), ...
                 'ValueChangedFcn',@(~,e)obj.seek(e.Value));
+            % The video timeline is intentionally green, unlike the blue HSV sliders.
+            try, obj.timeline.BackgroundColor=C.green; catch, end
             obj.place(obj.timeline,2,[1 5]);
         end
         function selectColour(obj,k)
@@ -214,7 +280,7 @@ classdef HSVVideoCalibratorV1 < handle
                 obj.timeline.Limits=[0 max(candidate.Duration,0.001)];
                 obj.info.Text=sprintf('%s | %d x %d | %.3f s | %.2f FPS', ...
                     f,candidate.Width,candidate.Height,candidate.Duration,candidate.FrameRate);
-                obj.acceptFrame(first); obj.status.Text='Loaded - click a colour to calibrate';
+                obj.acceptFrame(first); obj.status.Text='VIDEO LOADED  |  SELECT A COLOUR TO CALIBRATE';
             catch err
                 uialert(obj.fig,err.message,'Cannot open video');
             end
@@ -244,7 +310,7 @@ classdef HSVVideoCalibratorV1 < handle
             if isempty(obj.reader), return; end
             if obj.playing, obj.pauseVideo(); return; end
             if ~hasFrame(obj.reader), obj.seek(0); end
-            obj.playing=true; obj.playButton.Text='Pause';
+            obj.playing=true; obj.playButton.Text='PAUSE';
             % Keep this loop on MATLAB's UI thread. drawnow processes the
             % Pause button and click-to-sample callbacks between frames.
             nextFrameAt=tic;
@@ -263,7 +329,7 @@ classdef HSVVideoCalibratorV1 < handle
         function pauseVideo(obj)
             obj.playing=false;
             if isgraphics(obj.playButton)
-                obj.playButton.Text='Play';
+                obj.playButton.Text='PLAY';
             end
         end
         function tick(obj)
@@ -405,7 +471,7 @@ classdef HSVVideoCalibratorV1 < handle
                 'opacity',obj.opacitySlider.Value,'units','H:0-179 S:0-255 V:0-255'); %#ok<NASGU>
             try
                 save(fullfile(p,f),'calibration'); obj.dirty=false;
-                obj.status.Text='Saved all six colour calibrations';
+                obj.status.Text='SAVED  |  ALL SIX COLOUR CALIBRATIONS';
             catch err, uialert(obj.fig,err.message,'Save failed'); end
         end
         function loadCalibration(obj)
@@ -478,7 +544,7 @@ classdef HSVVideoCalibratorV1 < handle
                 fprintf(fid,']\n');
                 [writeMessage,writeError]=ferror(fid);
                 if writeError~=0, error('%s',writeMessage); end
-                obj.status.Text='Exported Python ranges';
+                obj.status.Text='EXPORTED  |  PYTHON HSV RANGES';
             catch err, uialert(obj.fig,err.message,'Export failed'); end
         end
         function requestClose(obj)
@@ -500,7 +566,10 @@ classdef HSVVideoCalibratorV1 < handle
             control.Layout.Row=row; control.Layout.Column=column;
         end
         function b=button(parent,text,row,column,callback)
-            b=uibutton(parent,'Text',text,'ButtonPushedFcn',callback);
+            b=uibutton(parent,'Text',text,'ButtonPushedFcn',callback, ...
+                'BackgroundColor',[0.12 0.42 0.70], ...
+                'FontColor',[0.96 0.98 1.00], ...
+                'FontWeight','bold','FontSize',10);
             HSVVideoCalibratorV1.place(b,row,column);
         end
     end
